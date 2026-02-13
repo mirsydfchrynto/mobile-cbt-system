@@ -91,26 +91,26 @@ class ExamPrepPage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 100), // Diganti dari Spacer
+              const SizedBox(height: 48), // Diperkecil agar tombol naik
               
               SizedBox(
                 width: double.infinity,
-                height: 70,
+                height: 64, // Sedikit diperkecil agar pas
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pushReplacementNamed('/exam_room', arguments: args);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary, 
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                    elevation: 10,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    elevation: 4,
                     shadowColor: AppColors.primary.withValues(alpha: 0.3),
                   ),
                   child: const Text("MULAI MENGERJAKAN", style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1, fontSize: 16)),
                 ),
-              ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.5),
+              ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2),
               
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
             ],
           ),
         ),

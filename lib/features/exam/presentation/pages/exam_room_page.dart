@@ -45,6 +45,7 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
   Duration _remainingDuration = Duration.zero;
   bool _isSubmitting = false;
   int _violationCount = 0;
+  DateTime? _lastViolationTime;
 
   @override
   void initState() {
