@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "913244224408",
+    "project_id": "cbt-master-6e6a4",
+    "storage_bucket": "cbt-master-6e6a4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913244224408:android:57b3aaabf92e1b0a0609ed",
+        "android_client_info": {
+          "package_name": "cbt.master"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "913244224408-4dsp2nc8n7neic8fkaqpn4bqccrlh6nh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGYfNWvhdQt3Mx5m4Q8vrk922f-KrS7Vg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "913244224408-4dsp2nc8n7neic8fkaqpn4bqccrlh6nh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

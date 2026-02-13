@@ -1,0 +1,15 @@
+appId: com.securecbt.cbt_mobile
+---
+- launchApp
+- assertVisible: "SCAN QR"
+- longPressOn: "Icon" # Secret door
+- assertVisible: "Talker" # Debug log
+- back
+- tapOn: "MULAI SCAN"
+- assertVisible: "Siapa namamu?"
+- tapOn: "NAMA LENGKAP"
+- inputText: "Tester Enterprise"
+- tapOn: "KELAS / GRUP"
+- inputText: "QA-1"
+- tapOn: "LANJUT"
+- assertVisible: "MULAI KERJAKAN"

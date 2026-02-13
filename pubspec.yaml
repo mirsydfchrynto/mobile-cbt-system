@@ -1,0 +1,61 @@
+name: okey_bimbel
+description: "Okey Bimbel - Official Student Exam Application"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.10.1 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  talker_flutter: ^4.5.0
+  logger: ^2.5.0
+  cupertino_icons: ^1.0.8
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.8
+  get_it: ^9.2.0
+  dartz: ^0.10.1
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  flutter_secure_storage: ^10.0.0
+  wakelock_plus: ^1.4.0
+  connectivity_plus: ^7.0.0
+  google_fonts: ^8.0.1
+  firebase_core: ^4.4.0
+  cloud_firestore: ^6.1.2
+  firebase_auth: ^6.1.4
+  flutter_riverpod: ^2.6.1
+  
+  # Handshake & Visuals
+  mobile_scanner: ^7.1.4
+  qr_flutter: ^4.1.0
+  flutter_animate: ^4.5.2
+  intl: ^0.20.2
+  lucide_icons_flutter: ^1.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  mocktail: ^1.0.4
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.13
+  hive_generator: ^2.0.1
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/icon.png"
+  min_sdk_android: 21
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+
+    - assets/images/
