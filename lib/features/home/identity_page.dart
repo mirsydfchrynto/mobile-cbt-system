@@ -188,6 +188,11 @@ class _IdentityPageState extends State<IdentityPage> {
       await sl<RemoteDataSource>().syncStudentData(uid: uid, name: normalizedName, group: group);
       
       if (mounted) {
+        // Micro delay untuk stabilitas transisi
+        await Future.delayed(const Duration(milliseconds: 200));
+        if (!mounted) return;
+        
+        setState(() => _isLoading = false);
         Navigator.pushReplacementNamed(context, '/exam_prep', arguments: {
           'exam': widget.exam,
           'session': widget.session,

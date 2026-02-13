@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart'; // for compute
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -21,6 +22,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool _isDownloading = false;
+  bool _isScanning = false;
+  String _loadingStatus = ""; // Status text for user visibility
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _groupController = TextEditingController();
 
@@ -45,32 +48,80 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false, 
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
-          child: Column(
-            children: [
-              const Spacer(flex: 2),
-              GestureDetector(
-                onLongPress: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TalkerScreen(talker: AppLogger.talker))),
-                child: Hero(
-                  tag: 'app_logo',
-                  child: Image.asset(
-                    'assets/images/logo.png', 
-                    height: 100,
-                    errorBuilder: (c, e, s) => const Icon(LucideIcons.graduationCap, size: 80, color: AppColors.primary),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+              child: Column(
+                children: [
+                  const Spacer(flex: 2),
+                  GestureDetector(
+                    onLongPress: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TalkerScreen(talker: AppLogger.talker))),
+                    child: Hero(
+                      tag: 'app_logo',
+                      child: Image.asset(
+                        'assets/images/logo.png', 
+                        height: 100,
+                        errorBuilder: (c, e, s) => const Icon(LucideIcons.graduationCap, size: 80, color: AppColors.primary),
+                      ),
+                    ),
+                  ).animate().fadeIn(duration: 800.ms).scale(begin: const Offset(0.9, 0.9)),
+                  const Spacer(flex: 3),
+                  _buildScanButton(),
+                  const Spacer(flex: 4),
+                  _buildCompactGuide(),
+                  const SizedBox(height: 32),
+                  Text(
+                    "OKEY BIMBEL v1.3.1 (STABLE)",
+                    style: GoogleFonts.plusJakartaSans(fontSize: 8, fontWeight: FontWeight.w800, color: AppColors.textSecondary.withValues(alpha: 0.2), letterSpacing: 1),
                   ),
-                ),
-              ).animate().fadeIn(duration: 800.ms).scale(begin: const Offset(0.9, 0.9)),
-              const Spacer(flex: 3),
-              _buildScanButton(),
-              const Spacer(flex: 4),
-              _buildCompactGuide(),
-              const SizedBox(height: 32),
-              Text(
-                "OKEY BIMBEL v1.3",
-                style: GoogleFonts.plusJakartaSans(fontSize: 8, fontWeight: FontWeight.w800, color: AppColors.textSecondary.withValues(alpha: 0.2), letterSpacing: 1),
+                ],
               ),
+            ),
+          ),
+          if (_isDownloading) _buildLoadingOverlay(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingOverlay() {
+    return GestureDetector(
+      onLongPress: () {
+        // Emergency Reset mechanism
+        setState(() => _isDownloading = false);
+        AppLogger.w("User forced reset from loading screen");
+      },
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.white.withValues(alpha: 0.95), // Solid background
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(color: AppColors.primary, strokeWidth: 5).animate().scale(duration: 400.ms),
+              const SizedBox(height: 24),
+              Text(
+                "MEMPROSES DATA...",
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 16, 
+                  fontWeight: FontWeight.w900, 
+                  color: AppColors.primary,
+                  letterSpacing: 2
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                _loadingStatus,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary
+                ),
+              ).animate().fadeIn(),
             ],
           ),
         ),
@@ -80,7 +131,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildScanButton() {
     return GestureDetector(
-      onTap: _isDownloading ? null : () => _showScanner(),
+      onTap: (_isDownloading || _isScanning) ? null : () => _showScanner(),
       child: Container(
         width: 220, height: 220,
         decoration: BoxDecoration(
@@ -91,23 +142,21 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _isDownloading 
-                ? const SizedBox(width: 50, height: 50, child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 5))
-                : Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.05), shape: BoxShape.circle),
-                    child: const Icon(LucideIcons.qrCode, color: AppColors.primary, size: 60),
-                  ),
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.05), shape: BoxShape.circle),
+                child: const Icon(LucideIcons.qrCode, color: AppColors.primary, size: 60),
+              ),
               const SizedBox(height: 20),
               Text(
-                _isDownloading ? "PROSES DATA..." : "MULAI UJIAN",
+                "MULAI UJIAN",
                 style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w900, color: AppColors.primary, letterSpacing: 2),
               ),
             ],
           ),
         ),
       ),
-    ).animate(target: _isDownloading ? 0 : 1, onPlay: (c) => c.repeat(reverse: true)).scale(duration: 2.seconds, begin: const Offset(1, 1), end: const Offset(1.05, 1.05));
+    ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(duration: 2.seconds, begin: const Offset(1, 1), end: const Offset(1.05, 1.05));
   }
 
   Widget _buildCompactGuide() {
@@ -130,100 +179,114 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showScanner() async {
-    final String? result = await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const ScannerPage()),
-    );
-
-    if (result != null && mounted) {
-      _handleQRDiscovery(result);
+    setState(() => _isScanning = true);
+    AppLogger.i("Opening Scanner...");
+    
+    // Gunakan try-catch block untuk scanner navigation
+    try {
+      final String? result = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const ScannerPage()),
+      );
+      
+      AppLogger.i("Scanner closed. Result: $result");
+      
+      // Jeda wajib untuk membiarkan resource kamera lepas sepenuhnya & UI rebuild
+      await Future.delayed(const Duration(milliseconds: 800));
+      
+      if (mounted) {
+        setState(() => _isScanning = false);
+        if (result != null) {
+          _handleQRDiscovery(result);
+        }
+      }
+    } catch (e) {
+      AppLogger.e("Scanner Error", e);
+      setState(() => _isScanning = false);
     }
   }
 
   void _handleQRDiscovery(String code) async {
     if (!mounted) return;
-    setState(() => _isDownloading = true);
+    
+    // 1. Set State Loading
+    setState(() {
+      _isDownloading = true;
+      _loadingStatus = "Validasi Kode...";
+    });
     
     try {
-      AppLogger.i("Discovery: Spliting code...");
+      AppLogger.i("Discovery: Parsing code...");
       final parts = code.split('|');
-      if (parts.length < 3 || parts[0] != 'SCBT') throw "Format QR tidak dikenal";
+      if (parts.length < 3 || parts[0] != 'SCBT') throw "Format QR Salah";
       
       final String examId = parts[1];
       final String sessionId = parts[2];
 
+      // 2. Fetch Session
+      if (mounted) setState(() => _loadingStatus = "Mengecek Sesi...");
       AppLogger.i("Discovery: Fetching session $sessionId...");
-      final sessionDoc = await FirebaseFirestore.instance.collection('sessions')
-          .doc(sessionId).get().timeout(const Duration(seconds: 10));
       
-      if (!sessionDoc.exists) throw "Sesi pengerjaan tidak ditemukan di server";
+      final sessionDoc = await FirebaseFirestore.instance.collection('sessions')
+          .doc(sessionId).get().timeout(const Duration(seconds: 15)); // Timeout lebih panjang
+      
+      if (!sessionDoc.exists) throw "Sesi tidak ditemukan";
       final sessionData = sessionDoc.data()!;
 
-      if (sessionData['status'] != 'active') throw "Sesi sudah tidak aktif atau telah ditutup";
-      if (sessionData['activeToken'] != code) throw "Token sudah kedaluwarsa, silakan scan ulang QR terbaru dari layar proyektor";
+      if (sessionData['status'] != 'active') throw "Sesi Ujian Ditutup";
+      if (sessionData['activeToken'] != code) throw "Token QR Kedaluwarsa";
 
-      AppLogger.i("Discovery: Processing exam data...");
+      // 3. Fetch Exam Data
+      if (mounted) setState(() => _loadingStatus = "Mengunduh Soal...");
+      AppLogger.i("Discovery: Fetching exam data...");
+      
       Map<String, dynamic> examRawData;
       if (sessionData['examSnapshot'] != null) {
         examRawData = Map<String, dynamic>.from(sessionData['examSnapshot']);
         examRawData['id'] = examId;
       } else {
-        final examDoc = await FirebaseFirestore.instance.collection('exams').doc(examId).get().timeout(const Duration(seconds: 10));
-        if (!examDoc.exists) throw "Materi soal asli tidak ditemukan";
+        final examDoc = await FirebaseFirestore.instance.collection('exams').doc(examId).get().timeout(const Duration(seconds: 20));
+        if (!examDoc.exists) throw "Data Soal Hilang";
         examRawData = examDoc.data()!;
         examRawData['id'] = examId;
       }
 
-      final List<dynamic> questionsRaw = examRawData['questions'] ?? [];
-      final List<Question> questions = questionsRaw.map((q) {
-        try {
-          return Question(
-            id: q['id']?.toString() ?? StudentUtils.generateNewId(),
-            text: q['text']?.toString() ?? "",
-            options: List<String>.from(q['options'] ?? []),
-            correctOptionIndex: q['correctOptionIndex'] ?? q['correctIndex'],
-            type: q['type']?.toString() ?? 'multiple_choice',
-            correctIndices: q['correctIndices'] != null ? List<int>.from(q['correctIndices']) : null,
-            points: q['points'] ?? 10,
-            images: q['images'] != null ? List<String>.from(q['images']) : null,
-          );
-        } catch (e) {
-          AppLogger.e("Question Mapping Error", e);
-          throw "Gagal memproses butir soal. Format data tidak valid.";
-        }
-      }).toList();
-
-      final examModel = Exam(
-        id: examId, title: examRawData['title']?.toString() ?? "Ujian", questions: questions,
-        durationMinutes: sessionData['duration'] ?? 60,
-        shuffleQuestions: examRawData['shuffleQuestions'] ?? false,
-        shuffleOptions: examRawData['shuffleOptions'] ?? false,
-        navigationMode: 'sequential',
+      // 4. Heavy Processing in Isolate (Compute)
+      if (mounted) setState(() => _loadingStatus = "Menyiapkan Ujian...");
+      AppLogger.i("Discovery: Processing Logic...");
+      
+      // Kirim data mentah ke isolate untuk diproses agar UI tidak freeze
+      final Exam examModel = await compute(_processExamData, examRawData);
+      
+      // Override duration from session
+      final finalExamModel = Exam(
+        id: examModel.id,
+        title: examModel.title,
+        questions: examModel.questions,
+        durationMinutes: sessionData['duration'] ?? examModel.durationMinutes,
+        shuffleQuestions: examModel.shuffleQuestions,
+        shuffleOptions: examModel.shuffleOptions,
+        navigationMode: examModel.navigationMode,
+        questionIndexMapping: examModel.questionIndexMapping,
+        optionMappings: examModel.optionMappings,
       );
 
-      if (examModel.questionIndexMapping == null) {
-        List<int> mapping = List.generate(questions.length, (i) => i);
-        if (examModel.shuffleQuestions) mapping.shuffle();
-        examModel.questionIndexMapping = mapping;
-        Map<int, List<int>> optMappings = {};
-        for (int i = 0; i < questions.length; i++) {
-          List<int> optMap = List.generate(questions[i].options.length, (j) => j);
-          if (examModel.shuffleOptions) optMap.shuffle();
-          optMappings[i] = optMap;
-        }
-        examModel.optionMappings = optMappings;
-      }
-
-      AppLogger.i("Discovery: Saving to LocalDB...");
-      await LocalDBService.saveExam(examModel);
+      // 5. Save to LocalDB
+      AppLogger.i("Discovery: Saving to DB...");
+      await LocalDBService.saveExam(finalExamModel);
       
       if (mounted) {
+        setState(() => _loadingStatus = "Selesai!");
+        await Future.delayed(const Duration(milliseconds: 500)); // Visual delay
+        
+        if (!mounted) return;
         setState(() => _isDownloading = false);
-        // NAVIGASI LANGSUNG KE HALAMAN IDENTITAS (STABIL)
+        
+        // 6. Navigate Cleanly
         Navigator.push(
           context, 
           MaterialPageRoute(
             builder: (context) => IdentityPage(
-              exam: examModel, 
+              exam: finalExamModel, 
               session: sessionData, 
               examId: examId, 
               sessionId: sessionId
@@ -232,11 +295,62 @@ class _HomePageState extends State<HomePage> {
         );
       }
     } catch (e, stack) {
-      AppLogger.e("Discovery Fatal Error", e, stack);
+      AppLogger.e("Discovery Failed", e, stack);
       if (mounted) {
-        setState(() => _isDownloading = false);
+        setState(() {
+          _isDownloading = false;
+          _loadingStatus = "";
+        });
         _showErrorDialog(e.toString());
       }
+    }
+  }
+
+  // Fungsi Statis untuk Compute (Isolate)
+  static Exam _processExamData(Map<String, dynamic> data) {
+    try {
+      final List<dynamic> questionsRaw = data['questions'] ?? [];
+      final List<Question> questions = questionsRaw.map((q) {
+        return Question(
+          id: q['id']?.toString() ?? StudentUtils.generateNewId(),
+          text: q['text']?.toString() ?? "",
+          options: List<String>.from(q['options'] ?? []),
+          correctOptionIndex: q['correctOptionIndex'] ?? q['correctIndex'],
+          type: q['type']?.toString() ?? 'multiple_choice',
+          correctIndices: q['correctIndices'] != null ? List<int>.from(q['correctIndices']) : null,
+          points: q['points'] ?? 10,
+          images: q['images'] != null ? List<String>.from(q['images']) : null,
+        );
+      }).toList();
+
+      final examModel = Exam(
+        id: data['id'], 
+        title: data['title']?.toString() ?? "Ujian", 
+        questions: questions,
+        durationMinutes: data['duration'] ?? 60,
+        shuffleQuestions: data['shuffleQuestions'] ?? false,
+        shuffleOptions: data['shuffleOptions'] ?? false,
+        navigationMode: 'sequential',
+      );
+
+      // Pre-calculate shuffles in isolate
+      if (examModel.questionIndexMapping == null) {
+        List<int> mapping = List.generate(questions.length, (i) => i);
+        if (examModel.shuffleQuestions) mapping.shuffle();
+        examModel.questionIndexMapping = mapping;
+        
+        Map<int, List<int>> optMappings = {};
+        for (int i = 0; i < questions.length; i++) {
+          List<int> optMap = List.generate(questions[i].options.length, (j) => j);
+          if (examModel.shuffleOptions) optMap.shuffle();
+          optMappings[i] = optMap;
+        }
+        examModel.optionMappings = optMappings;
+      }
+      
+      return examModel;
+    } catch (e) {
+      throw "Gagal memproses data soal: $e";
     }
   }
 
@@ -246,12 +360,12 @@ class _HomePageState extends State<HomePage> {
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text("⚠️ Gagal Memulai", style: TextStyle(fontWeight: FontWeight.w900, color: Colors.red)),
-        content: Text(message),
+        content: SingleChildScrollView(child: Text(message)), // Prevent overflow
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-            child: const Text("SAYA MENGERTI", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+            child: const Text("COBA LAGI", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
           )
         ],
       ),
@@ -259,8 +373,27 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class ScannerPage extends StatelessWidget {
+class ScannerPage extends StatefulWidget {
   const ScannerPage({super.key});
+
+  @override
+  State<ScannerPage> createState() => _ScannerPageState();
+}
+
+class _ScannerPageState extends State<ScannerPage> {
+  final MobileScannerController controller = MobileScannerController(
+    detectionSpeed: DetectionSpeed.noDuplicates,
+    formats: [BarcodeFormat.qrCode],
+  );
+
+  bool _isDisposed = false;
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -275,11 +408,19 @@ class ScannerPage extends StatelessWidget {
       body: Stack(
         children: [
           MobileScanner(
+            controller: controller,
             onDetect: (capture) {
+              if (_isDisposed) return;
               final barcode = capture.barcodes.firstOrNull;
               if (barcode?.rawValue != null) {
-                Navigator.pop(context, barcode!.rawValue);
+                // Prevent multiple pops
+                if (mounted) {
+                   Navigator.of(context).pop(barcode!.rawValue);
+                }
               }
+            },
+            errorBuilder: (context, error) {
+              return Center(child: Text("Camera Error: $error", style: const TextStyle(color: Colors.red)));
             },
           ),
           Center(

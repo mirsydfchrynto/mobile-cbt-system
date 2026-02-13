@@ -458,7 +458,18 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
     if (!mounted || _isSubmitting) {
       return;
     }
-    setState(() => _violationCount++);
+
+    final now = DateTime.now();
+    // Debounce: Hindari deteksi ganda dalam rentang 2 detik (misal inactive lalu paused berdekatan)
+    if (_lastViolationTime != null && now.difference(_lastViolationTime!) < const Duration(seconds: 2)) {
+      return;
+    }
+
+    setState(() {
+      _violationCount++;
+      _lastViolationTime = now;
+    });
+    
     _saveLocalProgress();
     if (_violationCount >= 3) {
       _handleSubmit(isAutomatic: true, reason: "Batas Pelanggaran");
