@@ -30,7 +30,7 @@ class ExamFinishPage extends StatelessWidget {
               const SizedBox(height: 48),
               
               Text(
-                "Ujian Selesai!",
+                "Hebat, Selesai!",
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 32,
                   fontWeight: FontWeight.w900,
@@ -40,7 +40,7 @@ class ExamFinishPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                "Seluruh jawaban Anda telah berhasil terkirim ke server Okey Bimbel. Mode keamanan aplikasi telah dinonaktifkan.",
+                "Jawabanmu sudah aman di tangan guru. Kamu boleh keluar dari aplikasi sekarang. Selamat beristirahat ya!",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,

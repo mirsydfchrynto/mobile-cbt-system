@@ -6,6 +6,46 @@ part of 'exam_model.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
+class StatementAdapter extends TypeAdapter<Statement> {
+  @override
+  final int typeId = 2;
+
+  @override
+  Statement read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Statement(
+      text: fields[0] as String,
+      isCorrect: fields[1] as bool,
+      imageUrl: fields[2] as String?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Statement obj) {
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.text)
+      ..writeByte(1)
+      ..write(obj.isCorrect)
+      ..writeByte(2)
+      ..write(obj.imageUrl);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StatementAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
 class QuestionAdapter extends TypeAdapter<Question> {
   @override
   final int typeId = 0;
@@ -26,13 +66,15 @@ class QuestionAdapter extends TypeAdapter<Question> {
       correctIndices: (fields[6] as List?)?.cast<int>(),
       points: fields[7] as int?,
       images: (fields[8] as List?)?.cast<String>(),
+      optionImages: (fields[9] as List?)?.cast<String>(),
+      statements: (fields[10] as List?)?.cast<Statement>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Question obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -50,7 +92,11 @@ class QuestionAdapter extends TypeAdapter<Question> {
       ..writeByte(7)
       ..write(obj.points)
       ..writeByte(8)
-      ..write(obj.images);
+      ..write(obj.images)
+      ..writeByte(9)
+      ..write(obj.optionImages)
+      ..writeByte(10)
+      ..write(obj.statements);
   }
 
   @override

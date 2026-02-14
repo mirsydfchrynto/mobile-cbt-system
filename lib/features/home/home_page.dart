@@ -233,7 +233,14 @@ class _HomePageState extends State<HomePage> {
       final sessionData = sessionDoc.data()!;
 
       if (sessionData['status'] != 'active') throw "Sesi Ujian Ditutup";
-      if (sessionData['activeToken'] != code) throw "Token QR Kedaluwarsa";
+      
+      // Validation with Grace Period (activeToken or lastToken)
+      final String activeToken = sessionData['activeToken'] ?? "";
+      final String lastToken = sessionData['lastToken'] ?? "";
+      
+      if (activeToken != code && lastToken != code) {
+        throw "Token QR Kedaluwarsa. Silakan scan ulang QR terbaru.";
+      }
 
       // 3. Fetch Exam Data
       if (mounted) setState(() => _loadingStatus = "Mengunduh Soal...");
@@ -320,6 +327,12 @@ class _HomePageState extends State<HomePage> {
           correctIndices: q['correctIndices'] != null ? List<int>.from(q['correctIndices']) : null,
           points: q['points'] ?? 10,
           images: q['images'] != null ? List<String>.from(q['images']) : null,
+          optionImages: q['optionImages'] != null ? List<String>.from(q['optionImages']) : null,
+          statements: q['statements'] != null ? (q['statements'] as List).map((s) => Statement(
+            text: s['text']?.toString() ?? "",
+            isCorrect: s['isCorrect'] ?? false,
+            imageUrl: s['imageUrl']?.toString(),
+          )).toList() : null,
         );
       }).toList();
 
@@ -359,13 +372,13 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text("⚠️ Gagal Memulai", style: TextStyle(fontWeight: FontWeight.w900, color: Colors.red)),
+        title: const Text("⚠️ Waduh, Belum Bisa Mulai", style: TextStyle(fontWeight: FontWeight.w900, color: Colors.red)),
         content: SingleChildScrollView(child: Text(message)), // Prevent overflow
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-            child: const Text("COBA LAGI", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+            child: const Text("COBA LAGI YA", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
           )
         ],
       ),

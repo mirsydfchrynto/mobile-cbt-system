@@ -2,6 +2,24 @@ import 'package:hive/hive.dart';
 
 part 'exam_model.g.dart';
 
+@HiveType(typeId: 2)
+class Statement extends HiveObject {
+  @HiveField(0)
+  final String text;
+
+  @HiveField(1)
+  final bool isCorrect;
+
+  @HiveField(2)
+  final String? imageUrl;
+
+  Statement({
+    required this.text,
+    required this.isCorrect,
+    this.imageUrl,
+  });
+}
+
 @HiveType(typeId: 0)
 class Question extends HiveObject {
   @HiveField(0)
@@ -20,7 +38,7 @@ class Question extends HiveObject {
   final String? imageUrl; // Legacy support
 
   @HiveField(5)
-  String? type; // 'multiple_choice' or 'checkboxes'
+  String? type; // 'multiple_choice', 'checkboxes', or 'true_false'
 
   @HiveField(6)
   final List<int>? correctIndices; // For checkboxes
@@ -30,6 +48,12 @@ class Question extends HiveObject {
 
   @HiveField(8)
   final List<String>? images; // Support for multiple base64 images
+
+  @HiveField(9)
+  final List<String>? optionImages; // Support for images per option
+
+  @HiveField(10)
+  final List<Statement>? statements; // For true_false multi-statement
 
   Question({
     required this.id,
@@ -41,6 +65,8 @@ class Question extends HiveObject {
     this.correctIndices,
     this.points = 10,
     this.images,
+    this.optionImages,
+    this.statements,
   });
 }
 

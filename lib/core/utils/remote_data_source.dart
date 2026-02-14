@@ -91,7 +91,7 @@ class RemoteDataSource {
         data['last_violation'] = violation;
       }
       
-      await _firestore.collection('active_exams').doc(docId).update(data);
+      await _firestore.collection('active_exams').doc(docId).set(data, SetOptions(merge: true));
     } catch (e) {
       // Silent error: Heartbeat failure should not interrupt exam
     }
@@ -109,7 +109,6 @@ class RemoteDataSource {
     required int finalIndex,
     String? violationReason,
     String? sessionName,
-    int? kkm,
   }) async {
     try {
       final docId = "${sessionId}_$studentId";
@@ -124,7 +123,6 @@ class RemoteDataSource {
         'exam_id': examId,
         'session_id': sessionId,
         'session_name': sessionName,
-        'kkm': kkm,
         'answers': formattedAnswers,
         'score': score,
         'violation_count': violationCount,

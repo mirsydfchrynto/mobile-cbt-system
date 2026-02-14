@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class SecurityService {
-  static const MethodChannel _channel = MethodChannel('com.securecbt/security');
+  static const MethodChannel _channel = MethodChannel('com.okeybimbel/security');
 
   /// Mengunci aplikasi agar tidak bisa keluar dan blokir screenshot
   static Future<void> startKioskMode() async {

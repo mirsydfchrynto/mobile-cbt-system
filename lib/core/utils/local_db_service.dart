@@ -26,6 +26,7 @@ class LocalDBService {
 
       if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(QuestionAdapter());
       if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(ExamAdapter());
+      if (!Hive.isAdapterRegistered(2)) Hive.registerAdapter(StatementAdapter());
 
       await _openAllBoxes(encryptionKey);
       AppLogger.i("LocalDB: All boxes initialized.");
