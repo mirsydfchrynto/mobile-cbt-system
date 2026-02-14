@@ -345,7 +345,7 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
                           child: Text(
-                            q.type == 'checkboxes' ? "PILIHAN GANDA KOMPLEKS" : q.type == 'true_false' ? "BENAR / SALAH" : "PILIHAN GANDA",
+                            q.type == 'checkboxes' ? "CENTANG KOTAK (BISA PILIH > 1)" : q.type == 'true_false' ? "BENAR / SALAH" : "PILIHAN GANDA",
                             style: GoogleFonts.plusJakartaSans(fontSize: 8, fontWeight: FontWeight.w900, color: AppColors.primary),
                           ),
                         ),
