@@ -356,6 +356,20 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
                       _buildMultiImage(q.images!),
                     HtmlWidget(
                       q.text,
+                      customStylesBuilder: (element) {
+                        if (element.localName == 'p') {
+                          return {
+                            'margin-bottom': '16px', 
+                            'display': 'block', 
+                            'line-height': '1.7',
+                            'text-align': 'justify'
+                          };
+                        }
+                        if (element.localName == 'br') {
+                          return {'display': 'block', 'margin-bottom': '10px'};
+                        }
+                        return null;
+                      },
                       customWidgetBuilder: (element) {
                         if (element.classes.contains('ql-formula')) {
                           return Padding(
@@ -372,7 +386,7 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
                         fontSize: 18, 
                         fontWeight: FontWeight.w700, 
                         color: AppColors.textPrimary, 
-                        height: 1.4
+                        height: 1.5
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -580,6 +594,17 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
               ),
             HtmlWidget(
               st.text,
+              customStylesBuilder: (element) {
+                if (element.localName == 'p') {
+                  return {
+                    'margin-bottom': '12px', 
+                    'display': 'block', 
+                    'line-height': '1.6',
+                    'text-align': 'justify'
+                  };
+                }
+                return null;
+              },
               customWidgetBuilder: (element) {
                 if (element.classes.contains('ql-formula')) {
                   return Padding(
@@ -736,6 +761,17 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
                 Expanded(
                   child: HtmlWidget(
                     q.options[originalOptionIdx],
+                    customStylesBuilder: (element) {
+                      if (element.localName == 'p') {
+                        return {
+                          'margin-bottom': '8px', 
+                          'display': 'block', 
+                          'line-height': '1.5',
+                          'text-align': 'justify'
+                        };
+                      }
+                      return null;
+                    },
                     customWidgetBuilder: (element) {
                       if (element.classes.contains('ql-formula')) {
                         return Padding(
@@ -790,24 +826,120 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
       GridView.builder(shrinkWrap: true, gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5, mainAxisSpacing: 12, crossAxisSpacing: 12), itemCount: total, itemBuilder: (context, index) {
         final isLocked = index > _maxSeenIndex;
         final isCurrent = index == _currentIndex;
-        final isAnswered = _answers.containsKey(exam.questions.indexOf(_shuffledQuestions[index]));
-        return InkWell(onTap: isLocked || _isSubmitting ? null : () { setState(() => _currentIndex = index); Navigator.pop(context); }, child: Container(decoration: BoxDecoration(color: isLocked ? Colors.grey[100] : isCurrent ? AppColors.primary : isAnswered ? AppColors.primary.withValues(alpha: 0.1) : Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: isCurrent ? AppColors.primary : AppColors.border, width: 2)), child: Center(child: isLocked ? const Icon(LucideIcons.lock, size: 16, color: Colors.grey) : Text("${index + 1}", style: TextStyle(fontWeight: FontWeight.bold, color: isCurrent ? Colors.white : AppColors.textPrimary)))));
+        final int originalIdx = exam.questions.indexOf(_shuffledQuestions[index]);
+        final isAnswered = _answers.containsKey(originalIdx);
+        
+        Color bgColor = Colors.white;
+        Color borderColor = AppColors.border;
+        Color textColor = AppColors.textPrimary;
+
+        if (isLocked) {
+          bgColor = Colors.grey[100]!;
+        } else if (isCurrent) {
+          bgColor = AppColors.primary;
+          borderColor = AppColors.primary;
+          textColor = Colors.white;
+        } else if (isAnswered) {
+          bgColor = AppColors.primary.withValues(alpha: 0.1);
+          borderColor = AppColors.primary.withValues(alpha: 0.2);
+        } else {
+          // Unanswered but already seen (not locked)
+          bgColor = Colors.orange.withValues(alpha: 0.05);
+          borderColor = Colors.orange.withValues(alpha: 0.3);
+          textColor = Colors.orange[900]!;
+        }
+
+        return InkWell(
+          onTap: isLocked || _isSubmitting ? null : () { setState(() => _currentIndex = index); Navigator.pop(context); }, 
+          child: Container(
+            decoration: BoxDecoration(
+              color: bgColor, 
+              borderRadius: BorderRadius.circular(16), 
+              border: Border.all(color: borderColor, width: 2)
+            ), 
+            child: Center(
+              child: isLocked 
+                ? const Icon(LucideIcons.lock, size: 16, color: Colors.grey) 
+                : Text("${index + 1}", style: TextStyle(fontWeight: FontWeight.bold, color: textColor))
+            )
+          )
+        );
       }),
       const SizedBox(height: 24),
     ])));
   }
 
   void _showSubmitDialog() {
-    showModalBottomSheet(context: context, shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(32))), builder: (context) => Padding(padding: const EdgeInsets.all(40), child: Column(mainAxisSize: MainAxisSize.min, children: [
-      const Icon(LucideIcons.shieldCheck, color: Colors.green, size: 60),
-      const SizedBox(height: 24),
-      const Text("Selesai Ujian?", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
-      const SizedBox(height: 8),
-      const Text("Pastikan semua jawaban sudah benar ya!", textAlign: TextAlign.center),
-      const SizedBox(height: 40),
-      SizedBox(width: double.infinity, height: 60, child: ElevatedButton(onPressed: () { Navigator.pop(context); _handleSubmit(); }, style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))), child: const Text("YA, KUMPULKAN JAWABAN", style: TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 14, letterSpacing: 1)))),
-      TextButton(onPressed: () => Navigator.pop(context), child: const Text("KEMBALI", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold))),
-    ])));
+    final int totalQuestions = _shuffledQuestions.length;
+    final int answeredCount = _answers.length;
+    final int unansweredCount = totalQuestions - answeredCount;
+    final bool hasUnanswered = unansweredCount > 0;
+
+    showModalBottomSheet(
+      context: context, 
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(32))), 
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(40), 
+        child: Column(
+          mainAxisSize: MainAxisSize.min, 
+          children: [
+            Icon(
+              hasUnanswered ? LucideIcons.shieldAlert : LucideIcons.shieldCheck, 
+              color: hasUnanswered ? Colors.orange : Colors.green, 
+              size: 60
+            ),
+            const SizedBox(height: 24),
+            Text(
+              hasUnanswered ? "BELUM SELESAI!" : "Selesai Ujian?", 
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 22, 
+                fontWeight: FontWeight.w900,
+                color: hasUnanswered ? Colors.orange[800] : Colors.black
+              )
+            ),
+            const SizedBox(height: 12),
+            if (hasUnanswered)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  "Masih ada $unansweredCount soal yang belum kamu jawab. Yakin mau dikumpulkan?", 
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, color: Colors.orange[900], fontSize: 13),
+                ),
+              )
+            else
+              const Text("Mantap! Semua soal sudah terjawab. Pastikan semua jawaban sudah benar ya!", textAlign: TextAlign.center),
+            const SizedBox(height: 40),
+            SizedBox(
+              width: double.infinity, 
+              height: 60, 
+              child: ElevatedButton(
+                onPressed: () { Navigator.pop(context); _handleSubmit(); }, 
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: hasUnanswered ? Colors.orange[700] : AppColors.primary, 
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+                ), 
+                child: Text(
+                  hasUnanswered ? "TETAP KUMPULKAN" : "YA, KUMPULKAN JAWABAN", 
+                  style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 14, letterSpacing: 1)
+                )
+              )
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context), 
+              child: Text(
+                hasUnanswered ? "KEMBALI KE SOAL" : "CEK LAGI", 
+                style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)
+              )
+            ),
+          ],
+        )
+      )
+    );
   }
 
   Widget _buildMultiImage(List<String> images) {

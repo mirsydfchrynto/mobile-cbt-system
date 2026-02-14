@@ -1,7 +1,7 @@
 name: okey_bimbel
 description: "Okey Bimbel - Official Student Exam Application"
 publish_to: 'none'
-version: 1.1.0+3
+version: 1.1.0+5
 
 environment:
   sdk: '>=3.10.1 <4.0.0'

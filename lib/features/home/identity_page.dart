@@ -81,7 +81,7 @@ class _IdentityPageState extends State<IdentityPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              "Masukkan nama lengkap dan kelasmu untuk mulai ujian ya.",
+              "Masukkan nama lengkap dan asal sekolahmu untuk mulai ujian ya.",
               style: GoogleFonts.plusJakartaSans(
                 color: AppColors.textSecondary, 
                 fontSize: 14,
@@ -91,7 +91,7 @@ class _IdentityPageState extends State<IdentityPage> {
             const SizedBox(height: 48),
             _buildField("NAMA LENGKAP", _nameController, LucideIcons.user),
             const SizedBox(height: 32),
-            _buildField("KELAS / GRUP", _groupController, LucideIcons.users),
+            _buildField("ASAL SEKOLAH", _groupController, LucideIcons.users),
             const SizedBox(height: 64),
             SizedBox(
               width: double.infinity,
@@ -164,7 +164,7 @@ class _IdentityPageState extends State<IdentityPage> {
 
     if (name.isEmpty || group.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Mohon isi nama dan kelas ya!"))
+        const SnackBar(content: Text("Mohon isi nama dan asal sekolah ya!"))
       );
       return;
     }
