@@ -215,12 +215,13 @@ class _HomePageState extends State<HomePage> {
     });
     
     try {
-      AppLogger.i("Discovery: Parsing code...");
-      final parts = code.split('|');
+      final cleanCode = code.trim();
+      AppLogger.i("Discovery: Parsing code: $cleanCode");
+      final parts = cleanCode.split('|');
       if (parts.length < 3 || parts[0] != 'SCBT') throw "Format QR Salah";
       
-      final String examId = parts[1];
-      final String sessionId = parts[2];
+      final String examId = parts[1].trim();
+      final String sessionId = parts[2].trim();
 
       // 2. Fetch Session
       if (mounted) setState(() => _loadingStatus = "Mengecek Sesi...");
@@ -235,10 +236,10 @@ class _HomePageState extends State<HomePage> {
       if (sessionData['status'] != 'active') throw "Sesi Ujian Ditutup";
       
       // Validation with Grace Period (activeToken or lastToken)
-      final String activeToken = sessionData['activeToken'] ?? "";
-      final String lastToken = sessionData['lastToken'] ?? "";
+      final String activeToken = (sessionData['activeToken'] ?? "").toString().trim();
+      final String lastToken = (sessionData['lastToken'] ?? "").toString().trim();
       
-      if (activeToken != code && lastToken != code) {
+      if (activeToken.isNotEmpty && activeToken != cleanCode && lastToken != cleanCode) {
         throw "Token QR Kedaluwarsa. Silakan scan ulang QR terbaru.";
       }
 
