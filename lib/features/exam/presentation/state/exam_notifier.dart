@@ -55,9 +55,9 @@ class ExamNotifier extends StateNotifier<ExamState> {
         'started_at': FieldValue.serverTimestamp(),
       });
 
-      // 2. Start Heartbeat Timer (Every 30 seconds)
+      // 2. Optimized Heartbeat Timer: 60 seconds (reduces writes by 50% for Spark Plan limit)
       _heartbeatTimer?.cancel();
-      _heartbeatTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      _heartbeatTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
         FirebaseFirestore.instance.collection('active_exams').doc(docId).update({
           'last_heartbeat': FieldValue.serverTimestamp(),
         });

@@ -154,27 +154,31 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
   }
 
   void _initMonitoringRecord() async {
+    // Thread activeToken from session for token-gated writes (parity fix)
+    final sessionData = _routeArgs['session'] as Map<dynamic, dynamic>? ?? {};
+    final String activeToken = sessionData['activeToken'] ?? "";
     await sl<RemoteDataSource>().startActiveExam(
       studentId: studentId, studentName: studentName, studentGroup: studentGroup,
       examId: examId, sessionId: sessionId, totalQuestions: _shuffledQuestions.length,
+      activeToken: activeToken,
     );
   }
 
   void _startHeartbeat() {
-    _heartbeatTimer?.cancel();
-    int heartbeatCount = 0;
-    // Interval 60 detik untuk stabilitas 100 user (mengurangi beban traffic)
-    _heartbeatTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
-      heartbeatCount++;
-      _syncProgressToCloud();
-      
-      // Re-sync waktu server setiap 5 menit (5x heartbeat)
-      if (heartbeatCount >= 5) {
-        heartbeatCount = 0;
-        _reSyncTimeSilent();
-      }
-    });
-  }
+      _heartbeatTimer?.cancel();
+      int heartbeatCount = 0;
+      // Interval 60 detik — seragam dengan RemoteDataSource & ExamNotifier (Spark write optimization)
+      _heartbeatTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
+        heartbeatCount++;
+        _syncProgressToCloud();
+
+        // Re-sync waktu server setiap 10 menit (10x heartbeat @ 60s)
+        if (heartbeatCount >= 10) {
+          heartbeatCount = 0;
+          _reSyncTimeSilent();
+        }
+      });
+    }
 
   void _reSyncTimeSilent() async {
     try {
@@ -188,15 +192,18 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
     }
   }
 
-  void _syncProgressToCloud({String? violation}) {
-    if (!mounted || _isSubmitting) {
+  void _syncProgressToCloud({String? violation, bool forceImmediate = false, String? activeTokenOverride}) {
+    if (!mounted) {
       return;
     }
+    final effectiveToken = activeTokenOverride ?? ((_routeArgs['session'] is Map) ? ((_routeArgs['session'] as Map)['activeToken'] ?? '') : '');
     sl<RemoteDataSource>().updateProgress(
       studentId: studentId, sessionId: sessionId,
       currentIndex: _currentIndex, maxSeenIndex: _maxSeenIndex,
       violationCount: _violationCount, answers: _answers,
+      activeToken: effectiveToken,
       violation: violation,
+      forceImmediate: forceImmediate,
     );
   }
 
@@ -243,14 +250,21 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
     _heartbeatTimer?.cancel();
     _sessionSubscription?.cancel();
 
+    // Force immediate sync on submission so active_exams has full final temp_answers before submission
+    _syncProgressToCloud(forceImmediate: true);
+
     if (mounted) {
       setState(() => _isSubmitting = true);
     }
     
-    try {
-      int score = 0;
-      final Map<int, dynamic> finalAnswers = {}; 
-      
+    final bool isDisqualified = _violationCount >= 3 || reason == "Batas Pelanggaran";
+    int score = 0;
+    final Map<int, dynamic> finalAnswers = {}; 
+    
+    if (isDisqualified) {
+      score = 0;
+      reason = "Diskualifikasi Pelanggaran (Batas Maksimal Terlampaui)";
+    } else {
       for (int i = 0; i < exam.questions.length; i++) {
         final q = exam.questions[i];
         final studentAns = _answers[i]; // _answers uses ORIGINAL indices as keys
@@ -282,36 +296,76 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
             if (allCorrect) score += (q.points ?? 10);
           }
         } else {
-          if (studentAns == q.correctOptionIndex) {
+          final correctIdx = q.correctIndex ?? q.correctOptionIndex;
+          if (studentAns == correctIdx) {
             score += (q.points ?? 10);
           }
         }
       }
+    }
 
-      final sessionData = (_routeArgs['session'] as Map<dynamic, dynamic>?);
+    final sessionData = (_routeArgs['session'] as Map<dynamic, dynamic>?);
+    final String activeToken = sessionData?['activeToken'] ?? "";
+    
+    final Map<String, dynamic> submitPayload = {
+      'studentId': studentId,
+      'studentName': studentName,
+      'studentGroup': studentGroup,
+      'examId': examId,
+      'sessionId': sessionId,
+      'answers': finalAnswers,
+      'score': score,
+      'violationCount': _violationCount,
+      'finalIndex': _currentIndex,
+      'activeToken': activeToken,
+      'violationReason': reason,
+      'sessionName': sessionData?['name'] ?? exam.title,
+    };
+
+    try {
       await sl<RemoteDataSource>().submitResultToCloud(
         studentId: studentId, studentName: studentName, studentGroup: studentGroup,
         examId: examId, sessionId: sessionId, answers: finalAnswers,
         score: score, violationCount: _violationCount, finalIndex: _currentIndex,
+        activeToken: activeToken,
         violationReason: reason, sessionName: sessionData?['name'] ?? exam.title,
       );
 
       await LocalDBService.deleteAnswers(examId);
       await Hive.box(LocalDBService.metadataBoxName).delete('max_index_$examId');
       if (mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil('/finish', (route) => false);
-        SecurityService.stopKioskMode(); 
+        SecurityService.stopKioskMode();
+        Navigator.of(context).pushNamedAndRemoveUntil('/finish', (route) => false, arguments: {
+          'isOfflineQueued': false,
+          'isDisqualified': isDisqualified,
+          'violationReason': reason,
+        });
       }
     } catch (e) {
-      AppLogger.e("Submit Gagal", e);
+      AppLogger.e("Submit Cloud Gagal", e);
+      
+      final String pendingDocId = "${sessionId}_$studentId";
+      if (!isDisqualified) {
+        // Save to offline pending submissions box only for normal exam completion
+        await LocalDBService.savePendingSubmission(pendingDocId, submitPayload);
+      }
+      await LocalDBService.deleteAnswers(examId);
+      await Hive.box(LocalDBService.metadataBoxName).delete('max_index_$examId');
+
       if (mounted) {
-        setState(() => _isSubmitting = false);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Yah, jawabanmu belum terkirim. Pastikan internetmu nyala ya!")));
+        SecurityService.stopKioskMode();
+        Navigator.of(context).pushNamedAndRemoveUntil('/finish', (route) => false, arguments: {
+          'isOfflineQueued': !isDisqualified,
+          'isDisqualified': isDisqualified,
+          'violationReason': reason,
+          'pendingDocId': pendingDocId,
+          'payload': submitPayload,
+        });
       }
     }
   }
 
-  @override
+      @override
   Widget build(BuildContext context) {
     if (_shuffledQuestions.isEmpty) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));

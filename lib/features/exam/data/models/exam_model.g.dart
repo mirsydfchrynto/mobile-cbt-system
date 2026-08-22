@@ -68,13 +68,14 @@ class QuestionAdapter extends TypeAdapter<Question> {
       images: (fields[8] as List?)?.cast<String>(),
       optionImages: (fields[9] as List?)?.cast<String>(),
       statements: (fields[10] as List?)?.cast<Statement>(),
+      correctIndex: fields[11] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Question obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -96,7 +97,9 @@ class QuestionAdapter extends TypeAdapter<Question> {
       ..writeByte(9)
       ..write(obj.optionImages)
       ..writeByte(10)
-      ..write(obj.statements);
+      ..write(obj.statements)
+      ..writeByte(11)
+      ..write(obj.correctIndex);
   }
 
   @override
@@ -131,13 +134,14 @@ class ExamAdapter extends TypeAdapter<Exam> {
       questionIndexMapping: (fields[7] as List?)?.cast<int>(),
       optionMappings: (fields[8] as Map?)?.map((dynamic k, dynamic v) =>
           MapEntry(k as int, (v as List).cast<int>())),
+      updatedAt: fields[9] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Exam obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -155,7 +159,9 @@ class ExamAdapter extends TypeAdapter<Exam> {
       ..writeByte(7)
       ..write(obj.questionIndexMapping)
       ..writeByte(8)
-      ..write(obj.optionMappings);
+      ..write(obj.optionMappings)
+      ..writeByte(9)
+      ..write(obj.updatedAt);
   }
 
   @override

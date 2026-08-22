@@ -54,6 +54,8 @@ class Question extends HiveObject {
 
   @HiveField(10)
   final List<Statement>? statements; // For true_false multi-statement
+  @HiveField(11)
+  final int? correctIndex; // Alias for correctOptionIndex for cross-platform parity
 
   Question({
     required this.id,
@@ -67,6 +69,7 @@ class Question extends HiveObject {
     this.images,
     this.optionImages,
     this.statements,
+    this.correctIndex,
   });
 }
 
@@ -99,6 +102,9 @@ class Exam extends HiveObject {
   @HiveField(8)
   Map<int, List<int>>? optionMappings; // Stores shuffled order of options per question index
 
+  @HiveField(9)
+  final int? updatedAt; // Milliseconds since epoch for checksum freshness
+
   Exam({
     required this.id,
     required this.title,
@@ -109,5 +115,6 @@ class Exam extends HiveObject {
     this.navigationMode = 'sequential',
     this.questionIndexMapping,
     this.optionMappings,
+    this.updatedAt,
   });
 }
