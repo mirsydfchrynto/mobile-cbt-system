@@ -51,10 +51,23 @@ class _ExamFinishPageState extends State<ExamFinishPage> {
         });
       }
     } catch (e) {
+      final errStr = e.toString().toLowerCase();
+      // Jika Firestore menolak karena dokumen hasil SUDAH ADA di server (allow update: if false)
+      if (errStr.contains('permission-denied') || errStr.contains('permission_denied') || errStr.contains('already exists')) {
+        await LocalDBService.deletePendingSubmission(pendingDocId);
+        if (mounted) {
+          setState(() {
+            _isRetrying = false;
+            _isSynced = true;
+          });
+        }
+        return;
+      }
+
       if (mounted) {
         setState(() {
           _isRetrying = false;
-          _errorMessage = "Internet masih belum stabil. Coba tekan tombol lagi ya!";
+          _errorMessage = "Internet masih belum stabil. Coba hubungkan ke hotspot/Wi-Fi lalu tekan tombol lagi ya!";
         });
       }
     }
