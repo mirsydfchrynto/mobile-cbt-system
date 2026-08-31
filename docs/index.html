@@ -3,19 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Download Okey Bimbel CBT Mobile — Aplikasi Resmi Siswa</title>
-  <meta name="description" content="Portal unduh resmi aplikasi ujian CBT Okey Bimbel untuk HP Android. Ringan, stabil, dan aman.">
+  <title>Download Okey Bimbel CBT</title>
+  <meta name="description" content="Download aplikasi ujian CBT Okey Bimbel untuk HP Android.">
   <link rel="icon" href="logo.png" type="image/png">
-
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Fonts: Plus Jakarta Sans & Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
-
-  <!-- QRCode.js Library -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <script>
@@ -24,25 +18,18 @@
         extend: {
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            heading: ['"Poppins"', '"Plus Jakarta Sans"', 'sans-serif'],
+            heading: ['"Poppins"', 'sans-serif'],
           },
           colors: {
-            okey: {
-              50: '#F0F7FF',
-              100: '#E0EFFF',
-              200: '#BAE0FD',
-              300: '#7CC8FB',
-              400: '#38BDF8',
-              500: '#2563EB',
-              600: '#1D4ED8',
-              700: '#1E40AF',
-              800: '#172554',
-              900: '#0F172A',
+            brand: {
+              50: '#EFF6FF',
+              100: '#DBEAFE',
+              200: '#BFDBFE',
+              500: '#3B82F6',
+              600: '#2563EB',
+              700: '#1D4ED8',
+              900: '#1E3A8A',
             }
-          },
-          boxShadow: {
-            'card-subtle': '0 10px 30px -5px rgba(37, 99, 235, 0.08), 0 2px 6px 0 rgba(0, 0, 0, 0.03)',
-            'btn-primary': '0 8px 24px -2px rgba(37, 99, 235, 0.4)',
           }
         }
       }
@@ -50,309 +37,333 @@
   </script>
 
   <style>
+    * { -webkit-tap-highlight-color: transparent; }
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background: linear-gradient(180deg, #F0F6FF 0%, #FFFFFF 40%, #F8FAFC 100%);
+      background: #F8FAFF;
       min-height: 100vh;
     }
-    h1, h2, h3, h4, .font-heading {
-      font-family: 'Poppins', 'Plus Jakarta Sans', sans-serif;
+    h1, h2, h3 { font-family: 'Poppins', sans-serif; }
+
+    .btn-download {
+      background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+      box-shadow: 0 6px 20px -2px rgba(37, 99, 235, 0.45);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-download:active {
+      transform: scale(0.97);
+      box-shadow: 0 3px 10px -2px rgba(37, 99, 235, 0.45);
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid #E8EEFF;
+      box-shadow: 0 2px 16px rgba(37, 99, 235, 0.07);
+    }
+
+    .step-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .qr-frame {
+      background: #fff;
+      border: 2px solid #BFDBFE;
+      border-radius: 18px;
+      padding: 14px;
+      display: inline-block;
+      box-shadow: inset 0 1px 6px rgba(37, 99, 235, 0.06);
+    }
+
+    /* QR corner decorators */
+    .qr-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    .qr-wrap::before,
+    .qr-wrap::after {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      border-color: #2563EB;
+      border-style: solid;
+      border-radius: 2px;
+    }
+    .qr-wrap::before {
+      top: -2px; left: -2px;
+      border-width: 3px 0 0 3px;
+    }
+    .qr-wrap::after {
+      bottom: -2px; right: -2px;
+      border-width: 0 3px 3px 0;
+    }
+
+    @keyframes pulse-dl {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(3px); }
+    }
+    .icon-dl { animation: pulse-dl 1.8s ease-in-out infinite; }
+
+    /* badge pill */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
     }
   </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between p-4 sm:p-6 selection:bg-okey-500 selection:text-white">
+<body class="text-slate-800 antialiased">
 
-  <!-- ================= MAIN FOCUSED CONTAINER ================= -->
-  <main class="w-full max-w-lg mx-auto space-y-5 my-auto pt-2 pb-6">
-    
-    <!-- 1. MAIN APP DOWNLOAD CARD -->
-    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-card-subtle text-center space-y-6">
-      
-      <!-- Official App Icon -->
-      <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white border border-slate-200/90 p-2 shadow-lg shadow-blue-500/10 mx-auto flex items-center justify-center">
-        <img src="logo.png" alt="Okey Bimbel CBT Icon" class="w-full h-full object-contain" onerror="this.src='icon.png'">
+  <div class="max-w-sm mx-auto px-4 pt-8 pb-10 space-y-4">
+
+    <!-- ══════════════════════════════
+         CARD 1 : APP IDENTITY + DOWNLOAD
+    ══════════════════════════════ -->
+    <div class="card p-6 text-center space-y-5">
+
+      <!-- Logo -->
+      <div class="mx-auto w-20 h-20 rounded-2xl border border-slate-200 bg-white shadow-md shadow-blue-500/10 p-1.5 flex items-center justify-center">
+        <img src="logo.png" alt="Okey Bimbel" class="w-full h-full object-contain" onerror="this.src='icon.png'">
       </div>
 
-      <!-- App Title & Tagline -->
+      <!-- Title -->
       <div class="space-y-1">
-        <h1 class="font-heading font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">
+        <h1 class="text-2xl font-heading font-black text-slate-900 tracking-tight leading-tight">
           Okey Bimbel CBT
         </h1>
-        <p class="text-xs sm:text-sm text-okey-600 font-bold">Aplikasi Ujian & Tryout Resmi Siswa</p>
-        
-        <!-- App Specification Badges -->
-        <div class="flex items-center justify-center gap-2 pt-2 text-[11px] sm:text-xs text-slate-500 font-semibold">
-          <span class="px-2.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700">Versi 1.1.5</span>
-          <span>•</span>
-          <span class="px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-200 text-okey-700">80 MB</span>
-          <span>•</span>
-          <span class="text-slate-600">Android 7.0+</span>
-        </div>
+        <p class="text-[13px] font-semibold text-brand-600">Aplikasi Ujian & Tryout Resmi Siswa</p>
       </div>
 
-      <!-- Primary Action Download Button -->
-      <div class="space-y-3 pt-1">
-        <a 
-          id="btnDownload"
-          href="https://github.com/mirsydfchrynto/mobile-cbt-system/releases/download/v1.1.5%2B10/okey-bimbel-cbt-release.apk"
-          onclick="handleDownloadClick()"
-          class="w-full py-4 px-6 rounded-2xl bg-okey-600 hover:bg-okey-700 active:scale-[0.98] text-white font-heading font-bold text-sm sm:text-base tracking-wide transition-all shadow-btn-primary flex items-center justify-center gap-3 text-center"
-        >
-          <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-          </svg>
-          <span>Download APK (80 MB)</span>
-        </a>
-
-        <!-- Download Feedback Notice -->
-        <div id="downloadNotice" class="hidden p-3 rounded-xl bg-blue-50 border border-blue-200 text-okey-800 text-xs font-semibold text-left flex items-start gap-2">
-          <svg class="w-4 h-4 text-okey-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-          <div>
-            <p class="font-bold">Proses unduh sedang berjalan.</p>
-            <p class="text-[11px] text-slate-500 mt-0.5">Buka bilah notifikasi HP Anda untuk melihat status unduhan file <code class="text-okey-600">okey-bimbel-cbt-release.apk</code>.</p>
-          </div>
-        </div>
+      <!-- Spec badges -->
+      <div class="flex items-center justify-center gap-2 flex-wrap">
+        <span class="badge bg-slate-100 text-slate-600 border border-slate-200">v1.1.5</span>
+        <span class="badge bg-brand-50 text-brand-700 border border-brand-200">80 MB</span>
+        <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200">Android 7.0+</span>
       </div>
 
-      <!-- Direct Link Helper -->
-      <div class="pt-2 text-[11px] text-slate-400">
-        Link langsung tanpa perantara • Bebas iklan & bebas login
+      <!-- Download button -->
+      <a
+        id="btnDownload"
+        href="https://github.com/mirsydfchrynto/mobile-cbt-system/releases/download/v1.1.5%2B10/okey-bimbel-cbt-release.apk"
+        onclick="onDownload()"
+        class="btn-download flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl text-white font-heading font-bold text-[15px] tracking-wide"
+      >
+        <svg class="w-5 h-5 icon-dl" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 4v12m0 0l-4-4m4 4l4-4"/>
+        </svg>
+        Download APK (80 MB)
+      </a>
+
+      <!-- Download notice -->
+      <div id="notice" class="hidden text-left bg-brand-50 border border-brand-200 rounded-xl px-3 py-2.5 text-[12px] text-brand-800 font-semibold flex gap-2 items-start">
+        <svg class="w-4 h-4 mt-0.5 shrink-0 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <span>Unduhan berjalan. Cek bilah notifikasi HP Anda.</span>
       </div>
 
     </div>
 
-    <!-- 2. BRANDED QR CODE IDENTITAS CARD -->
-    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-card-subtle space-y-4 text-center">
-      
-      <div class="space-y-1">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-okey-50 text-okey-700 text-xs font-bold border border-okey-200">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
-          <span>Pindai Barcode Ujian</span>
-        </div>
-        <h2 class="font-heading font-bold text-base sm:text-lg text-slate-900">Scan QR Code untuk Download di HP</h2>
-        <p class="text-xs text-slate-500 max-w-xs mx-auto">Arahkan kamera HP Android ke barcode berbingkai di bawah untuk mengunduh otomatis:</p>
+    <!-- ══════════════════════════════
+         CARD 2 : QR CODE
+    ══════════════════════════════ -->
+    <div class="card p-6 space-y-4 text-center">
+
+      <div class="space-y-0.5">
+        <h2 class="text-[15px] font-heading font-bold text-slate-900">Scan QR untuk Download</h2>
+        <p class="text-[12px] text-slate-500">Buka kamera HP lain → arahkan ke QR → download otomatis</p>
       </div>
 
-      <!-- QR Frame with Corporate Identity Borders -->
-      <div class="relative inline-block p-4 sm:p-5 bg-gradient-to-b from-slate-50 to-blue-50/40 rounded-3xl border-2 border-okey-200 shadow-inner">
-        <!-- Brand Header on QR -->
-        <div class="flex items-center justify-center gap-1.5 pb-3 border-b border-slate-200/60 mb-3">
-          <img src="logo.png" alt="Okey Logo" class="w-4 h-4 object-contain" onerror="this.src='icon.png'">
-          <span class="text-[11px] font-heading font-extrabold text-slate-800 tracking-wider uppercase">Okey Bimbel CBT Mobile</span>
+      <!-- QR display -->
+      <div class="flex flex-col items-center gap-3">
+        <div class="qr-frame">
+          <div class="qr-wrap">
+            <div id="qrcodeBox"></div>
+          </div>
         </div>
+        <p class="text-[11px] text-slate-400 font-medium">Resmi • Aman • Bebas Login</p>
+      </div>
 
-        <div id="qrcodeBox" class="flex items-center justify-center bg-white p-3 rounded-2xl shadow-sm border border-slate-100"></div>
+      <!-- Save QR button -->
+      <button
+        onclick="saveQR()"
+        class="w-full py-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 active:scale-[0.98] transition-all text-[13px] font-bold text-slate-700 flex items-center justify-center gap-2"
+      >
+        <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Simpan Gambar QR
+      </button>
 
-        <div class="text-[10px] text-slate-400 font-semibold mt-3">
-          Official Distribution • Verified Safe
+    </div>
+
+    <!-- ══════════════════════════════
+         CARD 3 : TUTORIAL 3 LANGKAH
+    ══════════════════════════════ -->
+    <div class="card p-6 space-y-4">
+
+      <h2 class="text-[15px] font-heading font-bold text-slate-900">Cara Pasang di Android</h2>
+
+      <!-- Step 1 -->
+      <div class="flex gap-3 items-start">
+        <div class="step-icon text-white" style="background: #2563EB;">1</div>
+        <div class="space-y-0.5 pt-0.5">
+          <p class="text-[13px] font-bold text-slate-900">Download File APK</p>
+          <p class="text-[12px] text-slate-500 leading-relaxed">Tekan tombol <strong class="text-slate-700">"Download APK"</strong> di atas dan tunggu hingga unduhan selesai 100%.</p>
         </div>
       </div>
 
-      <!-- Action Button to Save/Download Branded Poster QR -->
-      <div class="pt-1">
-        <button 
-          onclick="generateBrandedQRPNG()" 
-          class="w-full py-3.5 px-4 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-okey-700 text-xs font-bold transition-all border border-slate-200 flex items-center justify-center gap-2 shadow-sm"
-        >
-          <svg class="w-4 h-4 text-okey-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-          <span>Unduh Poster QR Code (Format Gambar Beridentitas)</span>
-        </button>
-        <p class="text-[10px] text-slate-400 mt-1.5">Gambar QR sudah dilengkapi logo dan instruksi lengkap, siap dicetak atau dibagikan ke WhatsApp.</p>
+      <div class="border-t border-dashed border-slate-200"></div>
+
+      <!-- Step 2 -->
+      <div class="flex gap-3 items-start">
+        <div class="step-icon text-white" style="background: #F59E0B;">2</div>
+        <div class="space-y-0.5 pt-0.5">
+          <p class="text-[13px] font-bold text-slate-900">Izinkan Pemasangan</p>
+          <p class="text-[12px] text-slate-500 leading-relaxed">Buka file lalu pilih <strong class="text-slate-700">"Tetap Install"</strong> jika muncul peringatan. Ini peringatan standar Android, bukan virus.</p>
+        </div>
+      </div>
+
+      <div class="border-t border-dashed border-slate-200"></div>
+
+      <!-- Step 3 -->
+      <div class="flex gap-3 items-start">
+        <div class="step-icon text-white" style="background: #10B981;">3</div>
+        <div class="space-y-0.5 pt-0.5">
+          <p class="text-[13px] font-bold text-slate-900">Buka & Mulai Ujian</p>
+          <p class="text-[12px] text-slate-500 leading-relaxed">Buka aplikasi, masukkan nama lengkap, lalu scan QR sesi dari guru pengawas.</p>
+        </div>
       </div>
 
     </div>
 
-    <!-- 3. TUTORIAL PEMASANGAN (3 LANGKAH JELAS & PROPER) -->
-    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-card-subtle space-y-4">
-      
-      <div class="space-y-1">
-        <div class="flex items-center gap-2">
-          <div class="w-6 h-6 rounded-lg bg-blue-50 text-okey-600 flex items-center justify-center font-bold text-xs">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-          </div>
-          <h2 class="font-heading font-bold text-sm sm:text-base text-slate-900">
-            Panduan Cara Pasang APK di HP Android
-          </h2>
-        </div>
-        <p class="text-xs text-slate-500">Ikuti 3 langkah mudah berikut agar aplikasi terpasang lancar:</p>
-      </div>
+    <!-- Footer -->
+    <p class="text-center text-[11px] text-slate-400 pt-1">© 2026 Okey Bimbel • Aplikasi Ujian Resmi</p>
 
-      <div class="space-y-3 pt-1">
-        
-        <!-- Step 1 -->
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex gap-3.5 items-start">
-          <div class="w-7 h-7 rounded-xl bg-okey-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">1</div>
-          <div class="space-y-1">
-            <h3 class="font-bold text-xs sm:text-sm text-slate-900">Unduh File APK</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              Tekan tombol biru <strong>"Download APK (80 MB)"</strong> di atas. Tunggu hingga bilah notifikasi unduhan di HP Anda mencapai 100%.
-            </p>
-          </div>
-        </div>
+  </div>
 
-        <!-- Step 2 -->
-        <div class="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 flex gap-3.5 items-start">
-          <div class="w-7 h-7 rounded-xl bg-amber-500 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">2</div>
-          <div class="space-y-1">
-            <h3 class="font-bold text-xs sm:text-sm text-slate-900">Izinkan Pemasangan</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              Buka file yang telah selesai diunduh. Jika sistem Android menampilkan dialog peringatan <em>"File mungkin berbahaya"</em>, pilih <strong>"Tetap Download / Install Anyway"</strong> (Peringatan standar Android untuk file APK resmi di luar Play Store).
-            </p>
-          </div>
-        </div>
+  <!-- Hidden canvas for QR poster generation -->
+  <canvas id="posterCanvas" width="800" height="1050" class="hidden"></canvas>
 
-        <!-- Step 3 -->
-        <div class="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 flex gap-3.5 items-start">
-          <div class="w-7 h-7 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">3</div>
-          <div class="space-y-1">
-            <h3 class="font-bold text-xs sm:text-sm text-slate-900">Buka & Mulai Ujian</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              Buka aplikasi Okey Bimbel, masukkan nama lengkap siswa, dan arahkan kamera HP ke barcode ujian yang ditampilkan oleh guru pengawas.
-            </p>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- 4. FOOTNOTE INFORMASI KEAMANAN -->
-    <div class="p-4 rounded-2xl bg-slate-100/80 border border-slate-200 text-center text-xs text-slate-500 space-y-1">
-      <div class="font-bold text-slate-700">Integritas Keamanan Terjamin</div>
-      <p class="text-[11px]">
-        Aplikasi bebas dari iklan komersial dan tidak meminta data pribadi sensitif. Aman untuk perangkat anak.
-      </p>
-    </div>
-
-  </main>
-
-  <!-- ================= FOOTER ================= -->
-  <footer class="w-full max-w-lg mx-auto py-4 text-center text-[11px] text-slate-400 space-y-1">
-    <div class="font-semibold text-slate-500">© 2026 Lembaga Bimbingan Belajar Okey Bimbel</div>
-    <div>Sistem Ujian Komputer & Mobile Terintegrasi</div>
-  </footer>
-
-  <!-- ================= OFFSCREEN POSTER CANVAS FOR HIGH-RES QR EXPORT ================= -->
-  <canvas id="posterCanvas" width="900" height="1150" class="hidden"></canvas>
-
-  <!-- ================= JAVASCRIPT ================= -->
   <script>
     const APK_URL = "https://github.com/mirsydfchrynto/mobile-cbt-system/releases/download/v1.1.5%2B10/okey-bimbel-cbt-release.apk";
 
-    // 1. Render Clean QR Code
+    // Render QR Code
     const qrcodeBox = document.getElementById("qrcodeBox");
-    const qrInstance = new QRCode(qrcodeBox, {
+    new QRCode(qrcodeBox, {
       text: APK_URL,
-      width: 140,
-      height: 140,
-      colorDark : "#0F172A",
-      colorLight : "#FFFFFF",
-      correctLevel : QRCode.CorrectLevel.H
+      width: 148,
+      height: 148,
+      colorDark: "#0F172A",
+      colorLight: "#FFFFFF",
+      correctLevel: QRCode.CorrectLevel.H
     });
 
-    function handleDownloadClick() {
-      const notice = document.getElementById("downloadNotice");
-      if (notice) notice.classList.remove("hidden");
+    function onDownload() {
+      document.getElementById("notice").classList.remove("hidden");
     }
 
-    // 2. Generate Professional Branded Poster PNG for Download
-    function generateBrandedQRPNG() {
+    function saveQR() {
       const canvas = document.getElementById("posterCanvas");
       const ctx = canvas.getContext("2d");
+      const W = canvas.width, H = canvas.height;
 
-      // Background Fill (Clean Professional Blue-White theme)
+      // Background
       ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, W, H);
 
-      // Top Header Gradient Banner
-      const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
-      grad.addColorStop(0, "#2563EB");
-      grad.addColorStop(1, "#1D4ED8");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, canvas.width, 180);
+      // Top blue stripe
+      const g = ctx.createLinearGradient(0, 0, W, 0);
+      g.addColorStop(0, "#2563EB");
+      g.addColorStop(1, "#1D4ED8");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, 160);
 
-      // Header Text
+      // Title
       ctx.fillStyle = "#FFFFFF";
-      ctx.font = "bold 44px 'Plus Jakarta Sans', sans-serif";
+      ctx.font = "bold 40px Arial, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("OKEY BIMBEL CBT MOBILE", canvas.width / 2, 85);
+      ctx.fillText("OKEY BIMBEL CBT MOBILE", W / 2, 72);
 
-      ctx.fillStyle = "#BAE0FD";
-      ctx.font = "600 24px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("Portal Unduh Resmi Aplikasi Ujian Siswa (Android)", canvas.width / 2, 130);
+      ctx.fillStyle = "#BFDBFE";
+      ctx.font = "22px Arial, sans-serif";
+      ctx.fillText("Scan QR Code untuk Download Aplikasi Ujian Siswa", W / 2, 120);
 
-      // White Card for QR Code
-      ctx.fillStyle = "#F8FAFC";
-      ctx.strokeStyle = "#CBD5E1";
-      ctx.lineWidth = 4;
-      
-      // Helper function to draw rounded rect safely on all browsers
-      function drawRoundedRect(c, x, y, w, h, r) {
-        c.beginPath();
-        c.moveTo(x + r, y);
-        c.lineTo(x + w - r, y);
-        c.quadraticCurveTo(x + w, y, x + w, y + r);
-        c.lineTo(x + w, y + h - r);
-        c.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-        c.lineTo(x + r, y + h);
-        c.quadraticCurveTo(x, y + h, x, y + h - r);
-        c.lineTo(x, y + r);
-        c.quadraticCurveTo(x, y, x + r, y);
-        c.closePath();
-        c.fill();
-        c.stroke();
-      }
-
-      const rx = 100, ry = 230, rw = 700, rh = 560;
-      drawRoundedRect(ctx, rx, ry, rw, rh, 32);
-
-      // Draw QR Code Image into Canvas
+      // QR area
       const qrImg = qrcodeBox.querySelector("img") || qrcodeBox.querySelector("canvas");
       if (qrImg) {
-        // Draw centered QR Code
-        ctx.drawImage(qrImg, canvas.width / 2 - 190, 280, 380, 380);
+        // Card bg
+        ctx.fillStyle = "#F8FAFF";
+        ctx.strokeStyle = "#BFDBFE";
+        ctx.lineWidth = 3;
+        roundRect(ctx, 100, 200, 600, 540, 24, true, true);
+
+        // Draw QR
+        ctx.drawImage(qrImg, W / 2 - 175, 250, 350, 350);
+
+        // Subtitle
+        ctx.fillStyle = "#1E293B";
+        ctx.font = "bold 22px Arial, sans-serif";
+        ctx.fillText("Arahkan kamera HP ke QR Code di atas", W / 2, 660);
+        ctx.fillStyle = "#64748B";
+        ctx.font = "18px Arial, sans-serif";
+        ctx.fillText("APK Resmi • 80 MB • Versi 1.1.5 • Android 7.0+", W / 2, 695);
       }
 
-      // QR Subtitle text
-      ctx.fillStyle = "#1E293B";
-      ctx.font = "bold 26px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("Arahkan Kamera HP ke QR Code di Atas", canvas.width / 2, 710);
-
-      ctx.fillStyle = "#64748B";
-      ctx.font = "500 20px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("Format APK Resmi • Ukuran 80 MB • Versi 1.1.5", canvas.width / 2, 745);
-
-      // Draw Bottom Step Instructions Box
+      // Steps box
       ctx.fillStyle = "#EFF6FF";
       ctx.strokeStyle = "#BFDBFE";
       ctx.lineWidth = 2;
-      const bx = 100, by = 830, bw = 700, bh = 220;
-      drawRoundedRect(ctx, bx, by, bw, bh, 24);
+      roundRect(ctx, 100, 780, 600, 210, 16, true, true);
 
       ctx.fillStyle = "#1D4ED8";
-      ctx.font = "bold 22px 'Plus Jakarta Sans', sans-serif";
+      ctx.font = "bold 18px Arial, sans-serif";
       ctx.textAlign = "left";
-      ctx.fillText("3 LANGKAH MUDAH PEMASANGAN:", bx + 30, by + 45);
+      ctx.fillText("CARA PASANG:", 130, 812);
 
       ctx.fillStyle = "#334155";
-      ctx.font = "500 19px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("1. Scan QR Code di atas menggunakan kamera HP Android.", bx + 30, by + 85);
-      ctx.fillText("2. Buka file & pilih 'Tetap Download / Install Anyway'.", bx + 30, by + 125);
-      ctx.fillText("3. Masukkan nama lengkap siswa & scan barcode ujian dari guru.", bx + 30, by + 165);
+      ctx.font = "16px Arial, sans-serif";
+      ctx.fillText("1. Download APK lewat kamera / link yang ada di QR", 130, 845);
+      ctx.fillText("2. Buka file → pilih 'Tetap Install' jika muncul peringatan", 130, 878);
+      ctx.fillText("3. Buka aplikasi, masukkan nama, scan QR dari guru", 130, 911);
 
       // Footer
       ctx.textAlign = "center";
       ctx.fillStyle = "#94A3B8";
-      ctx.font = "500 18px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("© 2026 Lembaga Bimbingan Belajar Okey Bimbel", canvas.width / 2, 1100);
+      ctx.font = "14px Arial, sans-serif";
+      ctx.fillText("© 2026 Okey Bimbel — Aplikasi Ujian Resmi Siswa", W / 2, 1020);
 
-      // Trigger PNG Download
-      const link = document.createElement("a");
-      link.download = "Poster-QR-Download-Okey-Bimbel-CBT.png";
-      link.href = canvas.toDataURL("image/png");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Trigger download
+      const a = document.createElement("a");
+      a.download = "QR-Download-OkeyBimbel-CBT.png";
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    }
+
+    function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
     }
   </script>
 </body>
