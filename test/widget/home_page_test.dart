@@ -33,7 +33,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     // Verify Scan Button exists
-    expect(find.text('SCAN QR'), findsOneWidget);
+    expect(find.text('MULAI UJIAN'), findsOneWidget);
 
     // Clear animations/timers before finishing test
     await tester.pumpWidget(Container());

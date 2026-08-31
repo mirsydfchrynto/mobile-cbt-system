@@ -90,8 +90,8 @@ class RemoteDataSource {
         bool forceImmediate = false,
       }) async {
         final now = DateTime.now();
-        // Throttle progress syncs to at most once every 60s unless forceImmediate is true
-        if (!forceImmediate && _lastSyncTime != null && now.difference(_lastSyncTime!).inSeconds < 60) {
+        // Throttle progress syncs to at most once every 90s unless forceImmediate is true (Spark Plan optimization)
+        if (!forceImmediate && _lastSyncTime != null && now.difference(_lastSyncTime!).inSeconds < 90) {
           return;
         }
         _lastSyncTime = now;
@@ -218,7 +218,7 @@ class RemoteDataSource {
         'submitted_at': FieldValue.serverTimestamp(),
         // Token-gated write: matches firestore.rules results create (L165)
         'token': activeToken,
-      }).timeout(const Duration(seconds: 8), onTimeout: () {
+      }).timeout(const Duration(seconds: 20), onTimeout: () {
         throw TimeoutException("Koneksi data seluler lambat/timeout. Dialihkan ke antrean lokal.");
       });
     } catch (e) {

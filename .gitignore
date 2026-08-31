@@ -47,9 +47,8 @@ app.*.map.json
 # Firebase Secrets
 android/app/src/google-services.json
 ios/Runner/GoogleService-Info.plist
-lib/firebase_options.dart
-
-# Firebase Secrets
-android/app/src/google-services.json
-ios/Runner/GoogleService-Info.plist
-lib/firebase_options.dart
+# Release APK Binaries (stored in GH Releases)
+*.apk
+node_modules/
+package.json
+package-lock.json

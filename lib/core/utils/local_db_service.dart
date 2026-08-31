@@ -39,7 +39,7 @@ class LocalDBService {
       AppLogger.i("LocalDB: All boxes initialized and verified.");
     } catch (e, stack) {
       AppLogger.e("LocalDB: Init failed, attempting recovery...", e, stack);
-      await _recover(encryptionKey: null); // Re-init without key or clear
+      await _recover(); // Self-healing purge and reopen with fresh key
     }
   }
 
@@ -139,8 +139,15 @@ class LocalDBService {
       await Hive.deleteBoxFromDisk(examBoxName);
       await Hive.deleteBoxFromDisk(answerBoxName);
       await Hive.deleteBoxFromDisk(metadataBoxName);
-      // Re-open with new files if corrupted
-      if (encryptionKey != null) await _openAllBoxes(encryptionKey);
+      await Hive.deleteBoxFromDisk(pendingSubmissionBoxName);
+
+      const storage = FlutterSecureStorage();
+      final secureKey = Hive.generateSecureKey();
+      await storage.write(key: secureKeyName, value: base64UrlEncode(secureKey));
+      final validKey = encryptionKey ?? secureKey;
+
+      await _openAllBoxes(validKey);
+      AppLogger.i("LocalDB: Self-healing complete, all boxes reopened cleanly.");
     } catch (e) {
       AppLogger.e("LocalDB: Recovery fatal failure", e);
     }

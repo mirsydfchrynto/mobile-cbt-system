@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart'; // for compute
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +10,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:okey_bimbel/core/utils/local_db_service.dart';
 import 'package:okey_bimbel/core/utils/student_utils.dart';
 import 'package:okey_bimbel/core/utils/app_logger.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:okey_bimbel/core/utils/remote_data_source.dart';
+import 'package:okey_bimbel/injection_container.dart';
 import 'package:okey_bimbel/features/exam/data/models/exam_model.dart';
 import 'package:okey_bimbel/features/home/identity_page.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -26,11 +30,71 @@ class _HomePageState extends State<HomePage> {
   String _loadingStatus = ""; // Status text for user visibility
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _groupController = TextEditingController();
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
     _loadSavedIdentity();
+    _flushPendingOfflineSubmissions();
+    _initConnectivityListener();
+  }
+
+  void _initConnectivityListener() {
+    _connectivitySubscription?.cancel();
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> results) {
+      final hasConnection = results.any((r) => r != ConnectivityResult.none);
+      if (hasConnection) {
+        _flushPendingOfflineSubmissions();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    _nameController.dispose();
+    _groupController.dispose();
+    super.dispose();
+  }
+
+  void _flushPendingOfflineSubmissions() async {
+    try {
+      final pending = LocalDBService.getPendingSubmissions();
+      if (pending.isEmpty) return;
+      
+      AppLogger.i("Found ${pending.length} pending offline submissions. Auto-flushing...");
+      for (final entry in pending.entries) {
+        final docId = entry.key;
+        final payload = entry.value;
+        try {
+          final answers = Map<int, dynamic>.from(payload['answers'] ?? {});
+          await sl<RemoteDataSource>().submitResultToCloud(
+            studentId: payload['studentId'],
+            studentName: payload['studentName'],
+            studentGroup: payload['studentGroup'],
+            examId: payload['examId'],
+            sessionId: payload['sessionId'],
+            answers: answers,
+            score: payload['score'],
+            violationCount: payload['violationCount'] ?? 0,
+            finalIndex: payload['finalIndex'] ?? 0,
+            activeToken: payload['activeToken'] ?? '',
+            violationReason: payload['violationReason'],
+            sessionName: payload['sessionName'],
+          );
+          await LocalDBService.deletePendingSubmission(docId);
+          AppLogger.i("Auto-flushed pending submission $docId successfully.");
+        } catch (e) {
+          final errStr = e.toString().toLowerCase();
+          if (errStr.contains('permission-denied') || errStr.contains('permission_denied') || errStr.contains('already exists')) {
+            await LocalDBService.deletePendingSubmission(docId);
+          }
+        }
+      }
+    } catch (e) {
+      AppLogger.e("Auto-flush pending submissions failed", e);
+    }
   }
 
   void _loadSavedIdentity() async {

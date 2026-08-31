@@ -25,16 +25,22 @@ void main() {
 
     // 2. Klik Tombol Scan
     await tester.tap(find.text('MULAI UJIAN'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
 
     // 3. Verifikasi Scanner Terbuka (ScannerPage)
-    expect(find.text('ARAHKAN KE QR'), findsOneWidget);
+    expect(find.text('SCAN QR UJIAN'), findsOneWidget);
 
     // 4. Simulasi Kembali dari Scanner (Navigator Pop)
     await tester.tap(find.byIcon(Icons.arrow_back));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1000));
 
     // 5. Verifikasi Kembali ke Beranda (Bukan Layar Hitam)
     expect(find.text('MULAI UJIAN'), findsOneWidget);
+    
+    // Clean up
+    await tester.pumpWidget(Container());
+    await tester.pump(const Duration(milliseconds: 500));
   });
 }

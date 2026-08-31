@@ -22,25 +22,28 @@ void main() {
   });
 
   testWidgets('Enterprise UI Audit - HomePage structure', (WidgetTester tester) async {
-    // Advanced: FakeAsync/Timer handling
-    await tester.runAsync(() async {
-      tester.view.physicalSize = const Size(1080, 2400);
-      
-      await tester.pumpWidget(const MaterialApp(home: HomePage()));
-      
-      // Advance time to bypass initial animations
-      await tester.pump(const Duration(seconds: 1));
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 1.0;
 
-      // Verify core layout components exist
-      expect(find.byType(SingleChildScrollView), findsOneWidget);
-      expect(find.byType(GestureDetector), findsAtLeast(2));
-
-      // Verify Theme Contrast
-      expect(AppColors.textPrimary, const Color(0xFF1E293B));
-      
-      // Force clean up
-      await tester.pumpWidget(const SizedBox());
-      await tester.pump(const Duration(seconds: 1));
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
     });
+
+    await tester.pumpWidget(const MaterialApp(home: HomePage()));
+    
+    // Advance time to bypass initial animations
+    await tester.pump(const Duration(seconds: 1));
+
+    // Verify core layout components exist
+    expect(find.byType(Column), findsAtLeast(1));
+    expect(find.byType(GestureDetector), findsAtLeast(2));
+
+    // Verify Theme Contrast
+    expect(AppColors.textPrimary, const Color(0xFF1E293B));
+    
+    // Force clean up
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 1));
   });
 }

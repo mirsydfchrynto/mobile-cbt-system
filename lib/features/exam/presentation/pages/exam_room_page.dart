@@ -16,6 +16,7 @@ import 'package:okey_bimbel/features/exam/data/models/exam_model.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
+import 'package:okey_bimbel/core/widgets/safe_image_widget.dart';
 
 class ExamRoomPage extends StatefulWidget {
   const ExamRoomPage({super.key});
@@ -88,18 +89,25 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
       _answers.addAll(localAnswers);
     }
 
-    final DateTime now = DateTime.now();
-    final DateTime personalEndTime = now.add(Duration(minutes: exam.durationMinutes));
-    DateTime globalEndTime = personalEndTime;
-    if (args['session'] != null && args['session']['endTime'] != null) {
-      final rawEndTime = args['session']['endTime'];
-      if (rawEndTime is Timestamp) {
-        globalEndTime = rawEndTime.toDate();
-      } else if (rawEndTime is DateTime) {
-        globalEndTime = rawEndTime;
+    final String timerKey = 'target_end_${sessionId}_$examId';
+    final storedEndEpoch = metadataBox.get(timerKey) as int?;
+    if (storedEndEpoch != null) {
+      _targetEndTime = DateTime.fromMillisecondsSinceEpoch(storedEndEpoch);
+    } else {
+      final DateTime now = DateTime.now();
+      final DateTime personalEndTime = now.add(Duration(minutes: exam.durationMinutes));
+      DateTime globalEndTime = personalEndTime;
+      if (args['session'] != null && args['session']['endTime'] != null) {
+        final rawEndTime = args['session']['endTime'];
+        if (rawEndTime is Timestamp) {
+          globalEndTime = rawEndTime.toDate();
+        } else if (rawEndTime is DateTime) {
+          globalEndTime = rawEndTime;
+        }
       }
+      _targetEndTime = globalEndTime.isBefore(personalEndTime) ? globalEndTime : personalEndTime;
+      metadataBox.put(timerKey, _targetEndTime.millisecondsSinceEpoch);
     }
-    _targetEndTime = globalEndTime.isBefore(personalEndTime) ? globalEndTime : personalEndTime;
     _syncWithServerTime();
     _listenToSessionStatus();
   }
@@ -139,16 +147,35 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
         return;
       }
       
-      final diff = serverTime.difference(DateTime.now());
-      _targetEndTime = _targetEndTime.subtract(diff); 
+      final sessionData = _routeArgs['session'] as Map?;
+      if (sessionData != null && sessionData['endTime'] != null) {
+        DateTime globalEndTime;
+        final rawEndTime = sessionData['endTime'];
+        if (rawEndTime is Timestamp) {
+          globalEndTime = rawEndTime.toDate();
+        } else if (rawEndTime is DateTime) {
+          globalEndTime = rawEndTime;
+        } else {
+          globalEndTime = _targetEndTime;
+        }
+
+        final remainingServerDuration = globalEndTime.difference(serverTime);
+        final remainingLocalDuration = _targetEndTime.difference(DateTime.now());
+        if (remainingServerDuration < remainingLocalDuration) {
+          _targetEndTime = DateTime.now().add(remainingServerDuration);
+          Hive.box(LocalDBService.metadataBoxName).put('target_end_${sessionId}_$examId', _targetEndTime.millisecondsSinceEpoch);
+        }
+      }
       
       _startTimer();
       _startHeartbeat();
       _initMonitoringRecord();
     } catch (e) {
+      AppLogger.w("Server time sync failed, falling back gracefully to local timer: $e");
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Waduh, koneksi waktu lagi macet. Coba lagi ya!")));
-        Navigator.pop(context);
+        _startTimer();
+        _startHeartbeat();
+        _initMonitoringRecord();
       }
     }
   }
@@ -167,13 +194,13 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
   void _startHeartbeat() {
       _heartbeatTimer?.cancel();
       int heartbeatCount = 0;
-      // Interval 60 detik — seragam dengan RemoteDataSource & ExamNotifier (Spark write optimization)
-      _heartbeatTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
+      // Interval 90 detik — seragam dengan RemoteDataSource & ExamNotifier (Spark write optimization)
+      _heartbeatTimer = Timer.periodic(const Duration(seconds: 90), (timer) {
         heartbeatCount++;
         _syncProgressToCloud();
 
-        // Re-sync waktu server setiap 10 menit (10x heartbeat @ 60s)
-        if (heartbeatCount >= 10) {
+        // Re-sync waktu server setiap ~10 menit (7x heartbeat @ 90s)
+        if (heartbeatCount >= 7) {
           heartbeatCount = 0;
           _reSyncTimeSilent();
         }
@@ -183,10 +210,24 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
   void _reSyncTimeSilent() async {
     try {
       final serverTime = await sl<RemoteDataSource>().getServerTime(studentId);
-      final diff = serverTime.difference(DateTime.now());
-      // Koreksi targetEndTime berdasarkan selisih waktu terbaru
-      _targetEndTime = _targetEndTime.subtract(diff);
-      AppLogger.i("Time Re-synced. Drift corrected.");
+      final sessionData = _routeArgs['session'] as Map?;
+      if (sessionData != null && sessionData['endTime'] != null) {
+        DateTime globalEndTime;
+        final rawEndTime = sessionData['endTime'];
+        if (rawEndTime is Timestamp) {
+          globalEndTime = rawEndTime.toDate();
+        } else if (rawEndTime is DateTime) {
+          globalEndTime = rawEndTime;
+        } else {
+          return;
+        }
+        final remainingServerDuration = globalEndTime.difference(serverTime);
+        final remainingLocalDuration = _targetEndTime.difference(DateTime.now());
+        if (remainingServerDuration < remainingLocalDuration) {
+          _targetEndTime = DateTime.now().add(remainingServerDuration);
+          Hive.box(LocalDBService.metadataBoxName).put('target_end_${sessionId}_$examId', _targetEndTime.millisecondsSinceEpoch);
+        }
+      }
     } catch (e) {
       // Silent fail for periodic sync
     }
@@ -333,6 +374,7 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
 
       await LocalDBService.deleteAnswers(examId);
       await Hive.box(LocalDBService.metadataBoxName).delete('max_index_$examId');
+      await Hive.box(LocalDBService.metadataBoxName).delete('target_end_${sessionId}_$examId');
       if (mounted) {
         SecurityService.stopKioskMode();
         Navigator.of(context).pushNamedAndRemoveUntil('/finish', (route) => false, arguments: {
@@ -351,6 +393,7 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
       }
       await LocalDBService.deleteAnswers(examId);
       await Hive.box(LocalDBService.metadataBoxName).delete('max_index_$examId');
+      await Hive.box(LocalDBService.metadataBoxName).delete('target_end_${sessionId}_$examId');
 
       if (mounted) {
         SecurityService.stopKioskMode();
@@ -376,6 +419,11 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
 
     return PopScope(
       canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && mounted && !_isSubmitting) {
+          _showViolationWarning();
+        }
+      },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -635,15 +683,11 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
             if (st.imageUrl != null && st.imageUrl!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: ClipRRect(
+                child: SafeImageWidget(
+                  imageSource: st.imageUrl,
+                  height: 150,
+                  width: double.infinity,
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.memory(
-                    base64Decode(st.imageUrl!.contains(',') ? st.imageUrl!.split(',').last : st.imageUrl!),
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    gaplessPlayback: true,
-                  ),
                 ),
               ),
             HtmlWidget(
@@ -851,19 +895,12 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
                   q.optionImages![originalOptionIdx].isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 16, left: 52),
-                  child: GestureDetector(
+                  child: SafeImageWidget(
+                    imageSource: q.optionImages![originalOptionIdx],
+                    height: 120,
+                    width: double.infinity,
+                    borderRadius: BorderRadius.circular(12),
                     onTap: () => _showLargeImage(q.optionImages![originalOptionIdx]),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.memory(
-                        base64Decode(q.optionImages![originalOptionIdx].contains(',') ? q.optionImages![originalOptionIdx].split(',').last : q.optionImages![originalOptionIdx]),
-                        height: 120,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        gaplessPlayback: true,
-                        errorBuilder: (c, e, s) => const SizedBox(),
-                      ),
-                    ),
                   ),
                 ),
             ],
@@ -997,14 +1034,46 @@ class _ExamRoomPageState extends State<ExamRoomPage> with WidgetsBindingObserver
   }
 
   Widget _buildMultiImage(List<String> images) {
-    return Padding(padding: const EdgeInsets.only(bottom: 24), child: Wrap(spacing: 8, runSpacing: 8, children: images.map((img) => GestureDetector(onTap: () => _showLargeImage(img), child: ClipRRect(borderRadius: BorderRadius.circular(12), child: Image.memory(base64Decode(img.contains(',') ? img.split(',').last : img), height: 140, width: 140, fit: BoxFit.cover, gaplessPlayback: true)))).toList()));
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: images.map((img) => SafeImageWidget(
+          imageSource: img,
+          height: 140,
+          width: 140,
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => _showLargeImage(img),
+        )).toList(),
+      ),
+    );
   }
 
-  void _showLargeImage(String base64) {
-    showDialog(context: context, builder: (context) => Dialog(backgroundColor: Colors.transparent, child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Align(alignment: Alignment.topRight, child: IconButton(icon: const Icon(LucideIcons.x, color: Colors.white), onPressed: () => Navigator.pop(context))),
-      ClipRRect(borderRadius: BorderRadius.circular(12), child: Image.memory(base64Decode(base64.contains(',') ? base64.split(',').last : base64), fit: BoxFit.contain)),
-    ])));
+  void _showLargeImage(String imageSource) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: const Icon(LucideIcons.x, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            SafeImageWidget(
+              imageSource: imageSource,
+              fit: BoxFit.contain,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _handleViolation() {
