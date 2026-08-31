@@ -10,7 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- QR: pakai qr-creator (canvas-based, reliable di semua mobile browser) -->
+  <script src="https://cdn.jsdelivr.net/npm/qr-creator@1.0.0/dist/qr-creator.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -258,15 +259,26 @@
   <script>
     const APK_URL = "https://github.com/mirsydfchrynto/mobile-cbt-system/releases/download/v1.1.5%2B10/okey-bimbel-cbt-release.apk";
 
-    // Render QR Code
-    const qrcodeBox = document.getElementById("qrcodeBox");
-    new QRCode(qrcodeBox, {
-      text: APK_URL,
-      width: 148,
-      height: 148,
-      colorDark: "#0F172A",
-      colorLight: "#FFFFFF",
-      correctLevel: QRCode.CorrectLevel.H
+    // Render QR Code — pakai qr-creator (canvas-based, reliable di Android browser)
+    document.addEventListener("DOMContentLoaded", function () {
+      const qrcodeBox = document.getElementById("qrcodeBox");
+
+      // Buat canvas eksplisit agar tidak hilang di mobile
+      const qrCanvas = document.createElement("canvas");
+      qrCanvas.id = "qrCanvas";
+      qrCanvas.width = 160;
+      qrCanvas.height = 160;
+      qrCanvas.style.display = "block";
+      qrcodeBox.appendChild(qrCanvas);
+
+      QrCreator.render({
+        text: APK_URL,
+        radius: 0.0,
+        ecLevel: "H",
+        fill: "#0F172A",
+        background: "#FFFFFF",
+        size: 160
+      }, qrCanvas);
     });
 
     function onDownload() {
@@ -300,7 +312,7 @@
       ctx.fillText("Scan QR Code untuk Download Aplikasi Ujian Siswa", W / 2, 120);
 
       // QR area
-      const qrImg = qrcodeBox.querySelector("img") || qrcodeBox.querySelector("canvas");
+      const qrImg = document.getElementById("qrCanvas");
       if (qrImg) {
         // Card bg
         ctx.fillStyle = "#F8FAFF";
