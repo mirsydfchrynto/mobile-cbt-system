@@ -1,223 +1,584 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Download Okey Bimbel CBT Mobile (v1.1.5 Resmi)</title>
-  <meta name="description" content="Portal Unduh Resmi Aplikasi Ujian CBT Siswa Okey Bimbel. Aman, Tahan Gangguan Sinyal, Anti-Curang.">
+  <title>Okey Bimbel CBT Mobile — Belajar Asik & Ujian Tanpa Ribet!</title>
+  <meta name="description" content="Aplikasi Ujian & Tryout Resmi Siswa Okey Bimbel. Ramah untuk anak SD & SMP, mudah dipahami orang tua, anti-gangguan sinyal!">
   <link rel="icon" href="https://okeybimbel.web.app/favicon.ico" type="image/x-icon">
-  
-  <!-- Tailwind CSS & Google Fonts -->
+
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Poppins, Quicksand & Nunito -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
-  <!-- QRCode.js library for high-res scanning -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@600;700;800;900&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti & QRCode Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            heading: ['"Poppins"', '"Quicksand"', 'sans-serif'],
+            body: ['"Nunito"', 'sans-serif'],
           },
           colors: {
             brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              400: '#60a5fa',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              900: '#1e3a8a',
+              50: '#F0F7FF',
+              100: '#E0EFFF',
+              200: '#BAE0FD',
+              300: '#7CC8FB',
+              400: '#38BDF8',
+              500: '#2563EB',
+              600: '#1D4ED8',
+              700: '#1E40AF',
+              900: '#0F172A',
+            },
+            pop: {
+              yellow: '#FACC15',
+              orange: '#F97316',
+              amber: '#F59E0B',
+              green: '#10B981',
+            }
+          },
+          animation: {
+            'float-slow': 'float 4s ease-in-out infinite',
+            'float-delayed': 'float 4s ease-in-out 2s infinite',
+            'pulse-glow': 'pulseGlow 2.5s infinite',
+            'bounce-soft': 'bounceSoft 2s infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+              '50%': { transform: 'translateY(-10px) rotate(2deg)' },
+            },
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 20px 0 rgba(250, 204, 21, 0.4)' },
+              '50%': { boxShadow: '0 0 35px 8px rgba(250, 204, 21, 0.7)' },
+            },
+            bounceSoft: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-6px)' },
             }
           }
         }
       }
     }
   </script>
+
   <style>
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: radial-gradient(circle at top, #0f172a, #020617);
-      min-height: 100vh;
+      font-family: 'Nunito', sans-serif;
+      background-color: #F8FAFC;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 25%, rgba(250, 204, 21, 0.12) 0%, transparent 35%),
+        radial-gradient(circle at 50% 85%, rgba(37, 99, 235, 0.08) 0%, transparent 50%);
+      background-attachment: fixed;
     }
-    .glass-card {
-      background: rgba(30, 41, 59, 0.7);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Poppins', 'Quicksand', sans-serif;
     }
-    .glow-btn {
-      box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.5);
+
+    /* Claymorphism Soft Pillowy Card */
+    .clay-card {
+      background: #FFFFFF;
+      border-radius: 28px;
+      box-shadow: 
+        0 20px 35px -10px rgba(37, 99, 235, 0.08),
+        0 1px 3px 0 rgba(0, 0, 0, 0.02),
+        inset 0 2px 4px 0 rgba(255, 255, 255, 0.9),
+        inset 0 -2px 4px 0 rgba(226, 232, 240, 0.4);
+      border: 1.5px solid #F1F5F9;
     }
-    .glow-btn:hover {
-      box-shadow: 0 0 35px 0px rgba(59, 130, 246, 0.7);
+
+    .clay-card-blue {
+      background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+      border-radius: 28px;
+      box-shadow: 
+        0 25px 40px -12px rgba(29, 78, 216, 0.35),
+        inset 0 2px 4px 0 rgba(255, 255, 255, 0.25),
+        inset 0 -2px 4px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    /* Elastic Jelly Button */
+    .btn-jelly-yellow {
+      background: linear-gradient(180deg, #FDE047 0%, #FACC15 60%, #EAB308 100%);
+      color: #713F12;
+      border-bottom: 5px solid #CA8A04;
+      border-radius: 22px;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 12px 24px -6px rgba(234, 179, 8, 0.4);
+    }
+    .btn-jelly-yellow:hover {
+      transform: translateY(-3px) scale(1.02);
+      border-bottom-width: 6px;
+      box-shadow: 0 18px 30px -6px rgba(234, 179, 8, 0.55);
+    }
+    .btn-jelly-yellow:active {
+      transform: translateY(3px) scale(0.98);
+      border-bottom-width: 2px;
+      box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3);
+    }
+
+    .btn-jelly-blue {
+      background: linear-gradient(180deg, #3B82F6 0%, #2563EB 60%, #1D4ED8 100%);
+      color: #FFFFFF;
+      border-bottom: 5px solid #1E40AF;
+      border-radius: 22px;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 12px 24px -6px rgba(37, 99, 235, 0.35);
+    }
+    .btn-jelly-blue:hover {
+      transform: translateY(-3px) scale(1.02);
+      border-bottom-width: 6px;
+      box-shadow: 0 18px 30px -6px rgba(37, 99, 235, 0.5);
+    }
+    .btn-jelly-blue:active {
+      transform: translateY(3px) scale(0.98);
+      border-bottom-width: 2px;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+    }
+
+    /* 3D Clay Clay Badge */
+    .clay-badge {
+      box-shadow: 
+        0 4px 10px rgba(0, 0, 0, 0.04),
+        inset 0 1px 2px rgba(255, 255, 255, 0.8),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.05);
     }
   </style>
 </head>
-<body class="text-slate-100 antialiased flex flex-col justify-between p-4 sm:p-6 md:p-10 selection:bg-blue-500 selection:text-white">
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-brand-400 selection:text-white">
 
-  <!-- Main Container -->
-  <main class="max-w-4xl mx-auto w-full pt-4 pb-12">
-    
-    <!-- Top Header & Badges -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-400 text-xs font-extrabold uppercase tracking-wider mb-4 shadow-sm">
-        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-        </svg>
-        Server Cloud Resmi • Okey Bimbel CBT
+  <!-- ================= NAVBAR ================= -->
+  <header class="w-full max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-4 flex items-center justify-between">
+    <!-- Logo & Brand -->
+    <a href="#" class="flex items-center gap-3 group">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 border-2 border-white transform group-hover:rotate-6 transition-transform">
+        <!-- 3D Mascot Smile Icon -->
+        <span class="text-2xl">🎓</span>
       </div>
-      
-      <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-3">
-        Unduh Aplikasi <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-sky-400">Okey Bimbel CBT</span>
+      <div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-heading font-black text-xl sm:text-2xl text-slate-900 tracking-tight">Okey<span class="text-blue-600">Bimbel</span></span>
+          <span class="px-2 py-0.5 rounded-full bg-yellow-400/20 text-yellow-700 font-black text-[10px] uppercase tracking-wider border border-yellow-300">CBT Mobile</span>
+        </div>
+        <p class="text-[11px] font-bold text-slate-400">Sahabat Belajar SD, SMP & SMA</p>
+      </div>
+    </a>
+
+    <!-- Dual Tab Navigation Switcher (Siswa vs Orang Tua) -->
+    <div class="bg-white p-1 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-1">
+      <button 
+        id="tabBtnSiswa"
+        onclick="switchTab('siswa')"
+        class="px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all bg-blue-600 text-white shadow-sm flex items-center gap-1.5"
+      >
+        <span>🎒</span> Area Siswa
+      </button>
+      <button 
+        id="tabBtnOrtu"
+        onclick="switchTab('ortu')"
+        class="px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-50 flex items-center gap-1.5"
+      >
+        <span>👨‍👩‍👧</span> Panduan Orang Tua
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION ================= -->
+  <main class="w-full max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-16 flex-1">
+    
+    <!-- Top Cheerful Announcement -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs sm:text-sm font-extrabold shadow-sm mb-4 animate-bounce-soft">
+        <span class="flex h-2.5 w-2.5 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
+        </span>
+        Versi Baru v1.1.5 Resmi • Ujian Lancar & Anti-Gangguan Sinyal! 🚀
+      </div>
+
+      <h1 class="font-heading font-black text-3xl sm:text-5xl md:text-6xl text-slate-900 tracking-tight leading-tight max-w-3xl mx-auto">
+        Ujian Tryout Jadi Seru & <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500">Makin Percaya Diri!</span>
       </h1>
-      <p class="text-slate-400 text-sm sm:text-base max-w-lg mx-auto font-medium">
-        Versi <strong class="text-white">v1.1.5 (Build 10)</strong> — Dilengkapi perlindungan anti-putus jaringan, sinkronisasi otomatis, dan ujian anti-curang.
+      
+      <p class="text-slate-600 text-base sm:text-lg max-w-xl mx-auto mt-4 font-medium leading-relaxed">
+        Aplikasi resmi siswa Okey Bimbel. Tinggal pasang di HP Android, scan kode ujian dari guru, dan kerjakan dengan tenang tanpa takut jawaban hilang!
       </p>
     </div>
 
-    <!-- MediaShare Style Download Box -->
-    <div class="glass-card rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl relative overflow-hidden mb-8">
-      <div class="absolute -top-24 -right-24 w-60 h-60 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+    <!-- ================= MAIN DOWNLOAD BENTO CARD ================= -->
+    <div class="clay-card-blue p-6 sm:p-10 md:p-12 text-white relative overflow-hidden mb-12">
+      <!-- 3D Decorative Floating Elements -->
+      <div class="absolute -top-12 -right-12 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -bottom-16 -left-16 w-64 h-64 bg-sky-400/20 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Clay 3D Mini Mascot Float -->
+      <div class="hidden lg:block absolute right-12 top-10 text-7xl animate-float-slow select-none opacity-90">
+        🚀
+      </div>
+      <div class="hidden lg:block absolute right-72 bottom-8 text-5xl animate-float-delayed select-none opacity-80">
+        ⭐
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
         
-        <!-- Left Column: File Info & Download Trigger -->
-        <div class="md:col-span-7 space-y-6">
+        <!-- Left Side: Big CTA & Highlights -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- App Info Pill -->
           <div class="flex items-center gap-4">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 shrink-0 border border-blue-400/30">
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-              </svg>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-white text-blue-600 flex items-center justify-center text-4xl shadow-xl shadow-black/10 border-2 border-white/80 shrink-0">
+              📱
             </div>
             <div>
-              <h2 class="text-xl sm:text-2xl font-black text-white">okey-bimbel-cbt-release.apk</h2>
-              <div class="flex flex-wrap items-center gap-2 mt-1">
-                <span class="px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold">Android 7.0+</span>
-                <span class="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold">Ukuran: ~80.1 MB</span>
-                <span class="px-2.5 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold">Rilis: 31 Agu 2026</span>
+              <div class="flex items-center gap-2">
+                <h2 class="font-heading font-black text-2xl sm:text-3xl text-white">Okey Bimbel CBT</h2>
+                <span class="px-2.5 py-0.5 rounded-full bg-yellow-400 text-yellow-950 font-black text-xs">v1.1.5</span>
+              </div>
+              <p class="text-blue-100 text-sm font-semibold mt-0.5">Format: APK Android Resmi • Ukuran Ringan: 80 MB</p>
+            </div>
+          </div>
+
+          <!-- Feature Bullets with 3D Icons -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <div class="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-3">
+              <span class="text-2xl">✨</span>
+              <div>
+                <h4 class="font-heading font-bold text-sm text-white">Langsung Pakai</h4>
+                <p class="text-xs text-blue-100">Tanpa ribet daftar akun email.</p>
+              </div>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-3">
+              <span class="text-2xl">🛡️</span>
+              <div>
+                <h4 class="font-heading font-bold text-sm text-white">Anti-Hilang Jawaban</h4>
+                <p class="text-xs text-blue-100">Tetap aman meski internet mati.</p>
               </div>
             </div>
           </div>
 
-          <!-- Feature Highlights -->
-          <div class="space-y-2.5 pt-2 border-t border-white/5">
-            <div class="flex items-start gap-3">
-              <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-              </div>
-              <p class="text-xs sm:text-sm text-slate-300"><strong>Masuk Instan:</strong> Cukup masukkan Nama & Scan QR dari Guru tanpa login email.</p>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-              </div>
-              <p class="text-xs sm:text-sm text-slate-300"><strong>Anti-Hilang Jawaban:</strong> Jawaban tersimpan otomatis di HP jika internet putus saat ujian.</p>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-              </div>
-              <p class="text-xs sm:text-sm text-slate-300"><strong>Akses Terpisah:</strong> Halaman khusus siswa, bebas dari antarmuka web admin.</p>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="pt-4 flex flex-col sm:flex-row gap-3">
-            <a
-              id="downloadBtn"
+          <!-- The Main CTA Buttons -->
+          <div class="pt-2 flex flex-col sm:flex-row gap-4">
+            <!-- Big Yellow Jelly Button -->
+            <a 
+              id="mainDownloadBtn"
               href="https://github.com/mirsydfchrynto/mobile-cbt-system/releases/download/v1.1.5%2B10/okey-bimbel-cbt-release.apk"
-              class="glow-btn inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-black text-sm uppercase tracking-wider transition-all transform hover:scale-[1.02] active:scale-[0.98] text-center"
+              onclick="triggerCelebration(event)"
+              class="btn-jelly-yellow px-8 py-5 text-center font-heading font-black text-base sm:text-lg uppercase tracking-wider flex items-center justify-center gap-3 group"
             >
-              <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 transform group-hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
               </svg>
-              <span>Download APK (80 MB)</span>
+              <span>Download Aplikasi (80 MB)</span>
             </a>
 
-            <a
+            <!-- Direct APK Link Button -->
+            <a 
               href="https://github.com/mirsydfchrynto/mobile-cbt-system/releases/tag/v1.1.5%2B10"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center justify-center gap-2 px-5 py-4 bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white rounded-2xl font-bold text-xs uppercase tracking-wider transition-all border border-slate-700/60 text-center"
+              class="px-5 py-5 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-bold text-sm text-center flex items-center justify-center gap-2 border border-white/20 transition-all"
             >
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-              </svg>
-              <span>Info Rilis GitHub</span>
+              <span>Catatan Rilis v1.1.5</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
             </a>
+          </div>
+
+          <!-- Instant Feedback Prompt -->
+          <div id="downloadSuccessBanner" class="hidden p-4 rounded-2xl bg-yellow-400 text-yellow-950 font-bold text-sm flex items-center gap-3 animate-bounce-soft shadow-lg">
+            <span class="text-2xl">🎉</span>
+            <div>
+              <p>Yey! File APK sedang diunduh. Tunggu beberapa saat sampai selesai ya!</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Side: Clean QR Code Box for HP Scan -->
+        <div class="lg:col-span-5 flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl bg-white text-slate-900 shadow-2xl border-4 border-blue-400/40 text-center">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-black uppercase mb-3">
+            <span>📷</span> Buka Kamera HP
+          </div>
+          
+          <div class="p-3 bg-slate-50 rounded-2xl border-2 border-slate-100 shadow-inner mb-3" id="qrcode"></div>
+          
+          <h3 class="font-heading font-bold text-base text-slate-900">Scan QR untuk Download di HP</h3>
+          <p class="text-xs text-slate-500 max-w-xs mt-1">Arahkan kamera HP ke kode QR di atas untuk langsung mengunduh file APK ke perangkat Anda.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= DYNAMIC TAB 1: AREA SISWA (SD / SMP / SMA) ================= -->
+    <section id="sectionSiswa" class="space-y-10">
+      
+      <div class="text-center max-w-xl mx-auto">
+        <span class="px-3.5 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-black uppercase tracking-wider border border-yellow-300">
+          🎮 Mudah Banget
+        </span>
+        <h3 class="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-2">
+          Cara Mulai Ujian Dalam 3 Langkah
+        </h3>
+        <p class="text-slate-500 text-sm mt-1">Nggak perlu hafalkan password atau email, ikuti 3 langkah gampang ini:</p>
+      </div>
+
+      <!-- 3 Steps Bento Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Step 1 -->
+        <div class="clay-card p-6 sm:p-8 space-y-4 relative overflow-hidden group hover:border-blue-300 transition-all">
+          <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-3xl font-black shadow-inner">
+            1️⃣
+          </div>
+          <h4 class="font-heading font-black text-lg text-slate-900">1. Unduh File APK</h4>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Klik tombol kuning <strong>"Download Aplikasi"</strong> di atas. Tunggu sampai unduhan selesai di HP Android kamu.
+          </p>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 text-[11px] text-slate-500 font-medium">
+            💡 Tip: Ukuran file hanya 80 MB, cepat dan hemat kuota.
           </div>
         </div>
 
-        <!-- Right Column: Instant QR Code Scanner -->
-        <div class="md:col-span-5 flex flex-col items-center justify-center p-6 rounded-2xl bg-slate-900/60 border border-slate-800 text-center">
-          <div class="p-3 bg-white rounded-2xl shadow-xl mb-3" id="qrcode"></div>
-          <p class="text-xs font-bold text-slate-200">Scan QR di HP Android</p>
-          <p class="text-[11px] text-slate-400 mt-0.5">Arahkan kamera HP ke kode QR di atas untuk langsung download APK.</p>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- 3 Step Installation Guide -->
-    <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-xl mb-8">
-      <h3 class="text-lg font-black text-white mb-6 flex items-center gap-2">
-        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        Panduan Cara Pasang APK di HP Android (3 Langkah Mudah)
-      </h3>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Step 1 -->
-        <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800 space-y-2">
-          <div class="w-8 h-8 rounded-xl bg-blue-600/20 text-blue-400 font-black text-sm flex items-center justify-center border border-blue-500/30">1</div>
-          <h4 class="text-sm font-bold text-white">Download File APK</h4>
-          <p class="text-xs text-slate-400 leading-relaxed">Klik tombol download di atas. Tunggu notifikasi unduhan hingga 100% selesai di HP Anda.</p>
-        </div>
-
         <!-- Step 2 -->
-        <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800 space-y-2">
-          <div class="w-8 h-8 rounded-xl bg-amber-600/20 text-amber-400 font-black text-sm flex items-center justify-center border border-amber-500/30">2</div>
-          <h4 class="text-sm font-bold text-white">Izinkan Penginstalan</h4>
-          <p class="text-xs text-slate-400 leading-relaxed">Buka file yang telah diunduh. Jika muncul pesan "File mungkin berbahaya", pilih <strong>"Tetap Download / Install Anyway"</strong> (Peringatan standar file APK).</p>
+        <div class="clay-card p-6 sm:p-8 space-y-4 relative overflow-hidden group hover:border-yellow-300 transition-all">
+          <div class="w-14 h-14 rounded-2xl bg-yellow-100 text-yellow-700 flex items-center justify-center text-3xl font-black shadow-inner">
+            2️⃣
+          </div>
+          <h4 class="font-heading font-black text-lg text-slate-900">2. Izinkan Pasang Aplikasi</h4>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Buka file yang sudah diunduh. Jika muncul pesan peringatan, pilih <strong>"Tetap Download / Install Anyway"</strong>.
+          </p>
+          <div class="p-3 rounded-xl bg-yellow-50 border border-yellow-100 text-[11px] text-yellow-800 font-medium">
+            🛡️ Tenang, aplikasi ini 100% aman buatan Okey Bimbel.
+          </div>
         </div>
 
         <!-- Step 3 -->
-        <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800 space-y-2">
-          <div class="w-8 h-8 rounded-xl bg-emerald-600/20 text-emerald-400 font-black text-sm flex items-center justify-center border border-emerald-500/30">3</div>
-          <h4 class="text-sm font-bold text-white">Mulai Ujian Tryout</h4>
-          <p class="text-xs text-slate-400 leading-relaxed">Buka aplikasi Okey Bimbel, izinkan akses kamera, lalu scan QR Code yang disediakan oleh guru/pengawas.</p>
+        <div class="clay-card p-6 sm:p-8 space-y-4 relative overflow-hidden group hover:border-emerald-300 transition-all">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl font-black shadow-inner">
+            3️⃣
+          </div>
+          <h4 class="font-heading font-black text-lg text-slate-900">3. Masukkan Nama & Scan QR</h4>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Buka aplikasi Okey Bimbel, ketik nama lengkapmu, lalu scan QR Code sesi ujian yang ditampilkan oleh Miss Lela / Guru!
+          </p>
+          <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-[11px] text-emerald-800 font-medium">
+            🎯 Kamu langsung siap menjawab soal dan raih nilai terbaik!
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Gamified Benefits Bento Grid -->
+      <div class="clay-card p-8 sm:p-10 bg-gradient-to-r from-blue-50 via-indigo-50/50 to-sky-50 border-2 border-blue-100">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+          <div class="p-4 space-y-2">
+            <span class="text-4xl">⏱️</span>
+            <h5 class="font-heading font-bold text-base text-slate-900">Waktu Ujian Adil</h5>
+            <p class="text-xs text-slate-600">Durasi ujianmu dihitung otomatis tanpa terpengaruh jam HP yang salah.</p>
+          </div>
+          <div class="p-4 space-y-2">
+            <span class="text-4xl">📶</span>
+            <h5 class="font-heading font-bold text-base text-slate-900">Koneksi Putus? Tetap Aman!</h5>
+            <p class="text-xs text-slate-600">Jawaban tersimpan di HP dan langsung terkirim otomatis saat sinyal nyala lagi.</p>
+          </div>
+          <div class="p-4 space-y-2">
+            <span class="text-4xl">🏆</span>
+            <h5 class="font-heading font-bold text-base text-slate-900">Hasil Cepat & Akurat</h5>
+            <p class="text-xs text-slate-600">Skor dan pembahasan ujian langsung diproses cepat oleh sistem guru.</p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Security Details & Hash Checksum -->
-    <div class="p-4 rounded-2xl bg-slate-900/30 border border-slate-800/80 text-center space-y-1">
-      <p class="text-[11px] text-slate-500 font-mono break-all">
-        SHA-256 Checksum: <span class="text-slate-400">704b414c26c97925145ca861eea181f59c78f2e7fb931254a7c04e8ea79f3f17</span>
-      </p>
-      <p class="text-[11px] text-slate-500">
-        © 2026 Okey Bimbel CBT Systems • Dilindungi Sistem Integritas & Enkripsi Offline.
-      </p>
+    </section>
+
+    <!-- ================= DYNAMIC TAB 2: PANDUAN ORANG TUA ================= -->
+    <section id="sectionOrtu" class="hidden space-y-10">
+      
+      <div class="text-center max-w-xl mx-auto">
+        <span class="px-3.5 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-black uppercase tracking-wider border border-blue-200">
+          👨‍👩‍👧 Informasi & Transparansi
+        </span>
+        <h3 class="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-2">
+          Jaminan Kenyamanan Belajar Putra-Putri Anda
+        </h3>
+        <p class="text-slate-500 text-sm mt-1">Kami merancang sistem ujian ini agar tidak membebani siswa dan orang tua.</p>
+      </div>
+
+      <!-- Parent Pillars Bento Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="clay-card p-6 sm:p-8 space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl">
+            🔒
+          </div>
+          <h4 class="font-heading font-bold text-base text-slate-900">Bebas Akun & Iklan</h4>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Anak tidak perlu mendaftarkan akun Google pribadi atau memasukkan password. Aplikasi 100% bebas dari iklan dan pelacakan komersial.
+          </p>
+        </div>
+
+        <div class="clay-card p-6 sm:p-8 space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl">
+            🛡️
+          </div>
+          <h4 class="font-heading font-bold text-base text-slate-900">Perlindungan Gangguan Sinyal</h4>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Jika jaringan seluler/WiFi di rumah tiba-tiba lambat atau terputus, jawaban anak tidak akan terhapus. Aplikasi menyimpan jawaban secara terenkripsi di perangkat.
+          </p>
+        </div>
+
+        <div class="clay-card p-6 sm:p-8 space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-yellow-100 text-yellow-700 flex items-center justify-center text-2xl">
+            🤝
+          </div>
+          <h4 class="font-heading font-bold text-base text-slate-900">Bantuan Langsung Guru</h4>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Jika ada kendala teknis pada HP anak saat ujian berlangsung, guru memiliki fitur pengisian lembar jawaban darurat (LJK) agar nilai anak tetap masuk.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Parent FAQ Accordion -->
+      <div class="clay-card p-6 sm:p-10 space-y-4">
+        <h4 class="font-heading font-black text-xl text-slate-900 mb-4 flex items-center gap-2">
+          <span>❓</span> Pertanyaan yang Sering Diajukan Orang Tua
+        </h4>
+
+        <div class="space-y-3">
+          <details class="group p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer">
+            <summary class="font-bold text-sm text-slate-800 flex items-center justify-between list-none">
+              <span>Apakah aplikasi ini aman dipasang di HP Android anak?</span>
+              <span class="text-blue-600 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Ya, 100% aman. Aplikasi Okey Bimbel CBT dibuat secara khusus untuk ujian internal bimbel tanpa mengambil data pribadi, kontak, atau galeri foto di ponsel anak Anda.
+            </p>
+          </details>
+
+          <details class="group p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer">
+            <summary class="font-bold text-sm text-slate-800 flex items-center justify-between list-none">
+              <span>Mengapa muncul pesan "File mungkin berbahaya" saat mendownload?</span>
+              <span class="text-blue-600 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Pesan tersebut adalah dialog standar keamanan sistem Android setiap kali pengguna mengunduh file format .APK langsung dari web institusi resmi. Anda cukup menekan <strong>"Tetap Download"</strong> atau <strong>"Install Anyway"</strong>.
+            </p>
+          </details>
+
+          <details class="group p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer">
+            <summary class="font-bold text-sm text-slate-800 flex items-center justify-between list-none">
+              <span>Bagaimana spesifikasi minimal HP yang dibutuhkan?</span>
+              <span class="text-blue-600 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Aplikasi sangat ringan dan dapat berjalan di hampir semua HP Android (versi Android 7.0 ke atas, RAM minimal 2GB).
+            </p>
+          </details>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= TECHNICAL INTEGRITY BADGE ================= -->
+    <div class="mt-12 text-center">
+      <div class="inline-flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-slate-400">
+        <span>🔒 SHA-256 Integritas: <code class="font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">704b414c...</code></span>
+        <span>•</span>
+        <span>⚡ Server Cloud: Google Cloud CDN</span>
+        <span>•</span>
+        <span>🛡️ Grade S Security Hardened</span>
+      </div>
     </div>
 
   </main>
 
+  <!-- ================= FLOATING WHATSAPP HELP BUTTON ================= -->
+  <aside class="fixed bottom-6 right-6 z-50">
+    <a 
+      href="https://wa.me/6285747043834?text=Halo%20Admin%20Okey%20Bimbel,%20saya%20butuh%20bantuan%20mengenai%20Aplikasi%20Ujian%20CBT%20..."
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn-jelly-blue px-5 py-3.5 flex items-center gap-2.5 shadow-2xl text-xs sm:text-sm font-black"
+    >
+      <span class="text-xl">💬</span>
+      <span class="hidden sm:inline">Butuh Bantuan? Tanya Guru / Admin</span>
+      <span class="sm:hidden">Bantuan Admin</span>
+    </a>
+  </aside>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="w-full bg-white border-t border-slate-200/80 py-8 px-4 sm:px-6 mt-12 text-center text-xs text-slate-500 space-y-2">
+    <div class="flex items-center justify-center gap-2 font-heading font-black text-sm text-slate-800">
+      <span>🎓</span> Okey Bimbel CBT Systems
+    </div>
+    <p>© 2026 Okey Bimbel. Seluruh hak cipta dilindungi undang-undang.</p>
+    <p class="text-[11px] text-slate-400">Portal Unduh Siswa Mandiri • Dikelola langsung oleh Tim Pengajar Okey Bimbel</p>
+  </footer>
+
+  <!-- ================= JAVASCRIPT INTERACTIONS ================= -->
   <script>
-    // Generate QR Code dynamically matching the download URL
-    const apkDownloadUrl = "https://github.com/mirsydfchrynto/mobile-cbt-system/releases/download/v1.1.5%2B10/okey-bimbel-cbt-release.apk";
-    
+    const APK_URL = "https://github.com/mirsydfchrynto/mobile-cbt-system/releases/download/v1.1.5%2B10/okey-bimbel-cbt-release.apk";
+
+    // Generate Crisp High-Resolution QR Code
     new QRCode(document.getElementById("qrcode"), {
-      text: apkDownloadUrl,
+      text: APK_URL,
       width: 140,
       height: 140,
-      colorDark : "#0f172a",
-      colorLight : "#ffffff",
+      colorDark : "#0F172A",
+      colorLight : "#F8FAFC",
       correctLevel : QRCode.CorrectLevel.M
     });
+
+    // Tab Switcher (Siswa vs Orang Tua)
+    function switchTab(mode) {
+      const sectionSiswa = document.getElementById("sectionSiswa");
+      const sectionOrtu = document.getElementById("sectionOrtu");
+      const btnSiswa = document.getElementById("tabBtnSiswa");
+      const btnOrtu = document.getElementById("tabBtnOrtu");
+
+      if (mode === "siswa") {
+        sectionSiswa.classList.remove("hidden");
+        sectionOrtu.classList.add("hidden");
+
+        btnSiswa.className = "px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all bg-blue-600 text-white shadow-sm flex items-center gap-1.5";
+        btnOrtu.className = "px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-50 flex items-center gap-1.5";
+      } else {
+        sectionSiswa.classList.add("hidden");
+        sectionOrtu.classList.remove("hidden");
+
+        btnOrtu.className = "px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all bg-blue-600 text-white shadow-sm flex items-center gap-1.5";
+        btnSiswa.className = "px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all text-slate-500 hover:text-slate-900 hover:bg-slate-50 flex items-center gap-1.5";
+      }
+    }
+
+    // Confetti Burst Trigger on Download Click
+    function triggerCelebration(event) {
+      const successBanner = document.getElementById("downloadSuccessBanner");
+      if (successBanner) {
+        successBanner.classList.remove("hidden");
+      }
+
+      // Trigger Confetti Explosion
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#2563EB', '#FACC15', '#38BDF8', '#F97316', '#10B981']
+        });
+      }
+    }
   </script>
 </body>
 </html>
