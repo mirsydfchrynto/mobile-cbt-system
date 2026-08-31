@@ -62,27 +62,13 @@
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between p-4 sm:p-6 selection:bg-okey-500 selection:text-white">
 
-  <!-- ================= TOP HEADER BRAND ================= -->
-  <header class="w-full max-w-lg mx-auto pt-2 pb-4 flex items-center justify-between">
-    <div class="flex items-center gap-2.5">
-      <div class="w-8 h-8 rounded-xl bg-white border border-slate-200 p-0.5 flex items-center justify-center shadow-sm">
-        <img src="logo.png" alt="Okey Bimbel Logo" class="w-full h-full object-contain" onerror="this.src='icon.png'">
-      </div>
-      <span class="font-heading font-black text-base text-slate-900 tracking-tight">Okey<span class="text-okey-600">Bimbel</span></span>
-    </div>
-    <div class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200 flex items-center gap-1">
-      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-      <span>Rilis Resmi v1.1.5</span>
-    </div>
-  </header>
-
   <!-- ================= MAIN FOCUSED CONTAINER ================= -->
-  <main class="w-full max-w-lg mx-auto space-y-5 flex-1">
+  <main class="w-full max-w-lg mx-auto space-y-5 my-auto pt-2 pb-6">
     
     <!-- 1. MAIN APP DOWNLOAD CARD -->
     <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-card-subtle text-center space-y-6">
       
-      <!-- Big Official App Icon -->
+      <!-- Official App Icon -->
       <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white border border-slate-200/90 p-2 shadow-lg shadow-blue-500/10 mx-auto flex items-center justify-center">
         <img src="logo.png" alt="Okey Bimbel CBT Icon" class="w-full h-full object-contain" onerror="this.src='icon.png'">
       </div>
@@ -96,7 +82,7 @@
         
         <!-- App Specification Badges -->
         <div class="flex items-center justify-center gap-2 pt-2 text-[11px] sm:text-xs text-slate-500 font-semibold">
-          <span class="px-2.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700">Versi 1.1.5 (Build 10)</span>
+          <span class="px-2.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700">Versi 1.1.5</span>
           <span>•</span>
           <span class="px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-200 text-okey-700">80 MB</span>
           <span>•</span>
@@ -300,38 +286,6 @@
       ctx.strokeStyle = "#CBD5E1";
       ctx.lineWidth = 4;
       
-      // Draw Rounded Rectangle for QR Container
-      const rx = 100, ry = 230, rw = 700, rh = 560, radius = 32;
-      ctx.beginPath();
-      ctx.moveTo(rx + radius, ry);
-      ctx.lineTo(rx + rw - radius, ry);
-      ctx.quadraticCurveTo(rx + rw, ry, rx + rw, ry + radius);
-      ctx.lineTo(rx + rw, ry + rh - radius);
-      ctx.quadraticCurveTo(rx + rw, ry + rh, rx + rw - radius, ry + rh);
-      ctx.lineTo(rx + radius, ry + rh);
-      ctx.quadraticCurveTo(rx, ry + rh, rx, ry + rh - radius);
-      ctx.lineTo(rx, ry + radius);
-      ctx.quadraticCurveTo(rx, ry, rx + radius, ry);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      // Draw QR Code Image into Canvas
-      const qrImg = qrcodeBox.querySelector("img") || qrcodeBox.querySelector("canvas");
-      if (qrImg) {
-        // Draw centered QR Code
-        ctx.drawImage(qrImg, canvas.width / 2 - 190, 280, 380, 380);
-      }
-
-      // QR Subtitle text
-      ctx.fillStyle = "#1E293B";
-      ctx.font = "bold 26px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("Arahkan Kamera HP ke QR Code di Atas", canvas.width / 2, 710);
-
-      ctx.fillStyle = "#64748B";
-      ctx.font = "500 20px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("Format APK Resmi • Ukuran 80 MB • Versi 1.1.5", canvas.width / 2, 745);
-
       // Helper function to draw rounded rect safely on all browsers
       function drawRoundedRect(c, x, y, w, h, r) {
         c.beginPath();
@@ -348,6 +302,25 @@
         c.fill();
         c.stroke();
       }
+
+      const rx = 100, ry = 230, rw = 700, rh = 560;
+      drawRoundedRect(ctx, rx, ry, rw, rh, 32);
+
+      // Draw QR Code Image into Canvas
+      const qrImg = qrcodeBox.querySelector("img") || qrcodeBox.querySelector("canvas");
+      if (qrImg) {
+        // Draw centered QR Code
+        ctx.drawImage(qrImg, canvas.width / 2 - 190, 280, 380, 380);
+      }
+
+      // QR Subtitle text
+      ctx.fillStyle = "#1E293B";
+      ctx.font = "bold 26px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("Arahkan Kamera HP ke QR Code di Atas", canvas.width / 2, 710);
+
+      ctx.fillStyle = "#64748B";
+      ctx.font = "500 20px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("Format APK Resmi • Ukuran 80 MB • Versi 1.1.5", canvas.width / 2, 745);
 
       // Draw Bottom Step Instructions Box
       ctx.fillStyle = "#EFF6FF";
@@ -371,7 +344,7 @@
       ctx.textAlign = "center";
       ctx.fillStyle = "#94A3B8";
       ctx.font = "500 18px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("© 2026 Lembaga Bimbingan Belajar Okey Bimbel • https://okeybimbel.web.app", canvas.width / 2, 1100);
+      ctx.fillText("© 2026 Lembaga Bimbingan Belajar Okey Bimbel", canvas.width / 2, 1100);
 
       // Trigger PNG Download
       const link = document.createElement("a");
